@@ -31,7 +31,7 @@ function generateKeyboard(){
         key.style.left = String(i*80) + 'px';
 
         var label = document.createElement('div');
-        label.innerHTML = '<b>' + whiteKeys[i+1][0].toUpperCase() + '</b>' + '<br><br>' + whiteKeys[i+1][1] + whiteKeys[i+1][2];
+        label.innerHTML = '<b>' + whiteKeys[i+1][0].toUpperCase() + '</b>' + '<br><br>' + whiteKeys[i+1][1] + '<span class="octave">' + whiteKeys[i+1][2] + '</span>';
         label.className = 'key-label';
         key.appendChild(label);
 
@@ -45,7 +45,7 @@ function generateKeyboard(){
         if (i !== 2 && i !== 6 && i !== 9){
             key.dataset.key = blackKeys[index+1][0];
             var label = document.createElement('div');
-            label.innerHTML = '<b>' + blackKeys[index+1][0].toUpperCase() + '</b>' + '<br><br>' + blackKeys[index+1][1] + blackKeys[index+1][2];
+            label.innerHTML = '<b>' + blackKeys[index+1][0].toUpperCase() + '</b>' + '<br><br>' + blackKeys[index+1][1] + '<span class="octave">' + blackKeys[index+1][2] + '</span>';
             label.className = 'key-label black-key-label';
             key.appendChild(label);
 
@@ -55,25 +55,39 @@ function generateKeyboard(){
     }
 }
 
+function refreshLabel(octaveChanger){
+    var octaveLabels = document.getElementsByClassName('octave');
+    for (var i = 0; i < octaveLabels.length; i++){
+        var label = octaveLabels[i];
+        label.innerText = String(Number(label.innerText) + octaveChanger);
+    }
+}
+
 function makeSound(){
     var started = false;
     var ctx = new (window.AudioContext || window.webkitAudioContext)();
-    var osc = ctx.createOscillator(); // instantiate an oscillator
-    var gainNode = ctx.createGain(); // Create a gain node.
+    var osc = ctx.createOscillator(); 
+    var gainNode = ctx.createGain();
     var volume = 0.5;
     gainNode.gain.value = volume;
-    osc.type = 'square'; // sine is the default - also square, sawtooth, triangle    
-    osc.connect(gainNode); // Connect the source to the gain node.
-    gainNode.connect(ctx.destination); // Connect the gain node to the destination.
+    osc.type = 'square';    
+    osc.connect(gainNode); 
+    gainNode.connect(ctx.destination);
 
     var pressedKeys = {};
     var octaveChanger = 0;
 
     document.addEventListener('keypress', function(event){
         if (event.key === 'x'){
-            octaveChanger += 1;
+            if (octaveChanger <= 1){
+                octaveChanger += 1;
+                refreshLabel(1);
+            }
         } else if (event.key === 'y'){
-            octaveChanger -=1;
+            if (octaveChanger >= -1){
+                octaveChanger -=1;
+                refreshLabel(-1);
+            }
         }
         if (keyToNote(event.key)){
             playSound(event.key, octaveChanger);
@@ -122,7 +136,7 @@ function makeSound(){
     function stopSound(key){
         delete pressedKeys[key];
         if (!Object.keys(pressedKeys).length){ 
-            for (var g = volume; g > 0; g = g - 0.001){
+            for (var g = volume; g > 0; g = g - 0.01){
                 gainNode.gain.value = g;
             }
             gainNode.disconnect(ctx.destination);
