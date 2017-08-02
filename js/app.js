@@ -1,4 +1,24 @@
-function main(){
+function generateKeyboard(){
+    var keyboard = document.getElementById('keyboard');
+    console.log(keyboard)
+    for (var i = 0; i < 12; i++){
+        var key = document.createElement('div');
+        key.className = 'white-key';
+        key.style.left = String(i*80) + 'px';
+        keyboard.appendChild(key);
+    }
+    for (var i = 0; i < 10; i++){
+        var key = document.createElement('div');
+        key.className = 'black-key';
+        key.style.left = String(50 + i*80) + 'px';
+        if (i !== 3 && i !== 6){
+            keyboard.appendChild(key);
+        }
+    }
+}
+
+
+function makeSound(){
     var started = false;
     var ctx = new (window.AudioContext || window.webkitAudioContext)();
     var osc = ctx.createOscillator(); // instantiate an oscillator
@@ -102,6 +122,11 @@ function main(){
         }
         return false
     }
+}
+
+function main(){
+    generateKeyboard();
+    makeSound();
 }
 
 window.onload = function(event){

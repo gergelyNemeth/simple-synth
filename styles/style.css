@@ -1,0 +1,40 @@
+body {
+    background-color: #ddd;
+}
+
+#keyboard {
+    position: relative;
+    margin: 30px auto;
+    height: 200px;
+}
+
+.white-key {
+    position: absolute;
+    width: 80px;
+    height: 400px;
+    border: rgba(32,32,32,0.2) solid 1px;
+    border-radius: 0 0 8px 8px;
+    background-color: ivory;
+    box-shadow: 2px 2px 5px grey;
+}
+
+.white-key:hover {
+    background-color: yellow;
+    cursor: pointer;
+}
+
+.black-key {
+    position: absolute;
+    width: 60px;
+    height: 250px;
+    border: rgba(100,100,100,0.6) solid 1px;
+    border-radius: 0 0 8px 8px;
+    background-color: #333;
+    box-shadow: 2px 2px 5px grey;
+    
+}
+
+.black-key:hover {
+    background-color: #ffff88;
+    cursor: pointer;
+}
