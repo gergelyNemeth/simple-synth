@@ -30,10 +30,11 @@ function generateKeyboard() {
         key.dataset.key = whiteKeys[i + 1][0];
         key.style.left = String(i * 80) + 'px';
 
-        var label = document.createElement('div');
-        label.innerHTML = '<b>' + whiteKeys[i + 1][0].toUpperCase() + '</b>' + '<br><br>' + whiteKeys[i + 1][1] + '<span class="octave">' + whiteKeys[i + 1][2] + '</span>';
-        label.className = 'key-label';
-        key.appendChild(label);
+        var whiteKeyLabel = document.createElement('div');
+        whiteKeyLabel.innerHTML = '<b>' + whiteKeys[i + 1][0].toUpperCase() + '</b>' + '<br><br>' +
+            whiteKeys[i + 1][1] + '<span class="octave">' + whiteKeys[i + 1][2] + '</span>';
+        whiteKeyLabel.className = 'key-label';
+        key.appendChild(whiteKeyLabel);
 
         keyboard.appendChild(key);
     }
@@ -44,10 +45,11 @@ function generateKeyboard() {
         key.style.left = String(50 + i * 80) + 'px';
         if (i !== 2 && i !== 6 && i !== 9) {
             key.dataset.key = blackKeys[index + 1][0];
-            var label = document.createElement('div');
-            label.innerHTML = '<b>' + blackKeys[index + 1][0].toUpperCase() + '</b>' + '<br><br>' + blackKeys[index + 1][1] + '<span class="octave">' + blackKeys[index + 1][2] + '</span>';
-            label.className = 'key-label black-key-label';
-            key.appendChild(label);
+            var blackKeyLabel = document.createElement('div');
+            blackKeyLabel.innerHTML = '<b>' + blackKeys[index + 1][0].toUpperCase() + '</b>' + '<br><br>' +
+                blackKeys[index + 1][1] + '<span class="octave">' + blackKeys[index + 1][2] + '</span>';
+            blackKeyLabel.className = 'key-label black-key-label';
+            key.appendChild(blackKeyLabel);
 
             index++;
             keyboard.appendChild(key);
@@ -68,7 +70,7 @@ function makeSound() {
     var ctx = new (window.AudioContext || window.webkitAudioContext)();
     var osc = ctx.createOscillator();
     var gainNode = ctx.createGain();
-    var volume = 0.8;
+    var volume = 0.5;
     gainNode.gain.value = volume;
     osc.type = 'square';
     osc.connect(gainNode);
@@ -82,15 +84,17 @@ function makeSound() {
             if (octaveChanger <= 1) {
                 octaveChanger += 1;
                 refreshLabel(1);
+                playHighestNote();
             }
         } else if (event.key === 'y') {
             if (octaveChanger >= -1) {
                 octaveChanger -= 1;
                 refreshLabel(-1);
+                playHighestNote();
             }
         }
         if (keyToNote(event.key)) {
-            playSound(event.key, octaveChanger);
+            playSound(event.key);
             var key = document.querySelector(`[data-key = ${event.key}]`);
             var label = key.children[0];
             if (label.classList.contains('black-key-label')) {
@@ -116,9 +120,10 @@ function makeSound() {
         }
     });
 
-    function playSound(key, octaveChanger) {
+    function playSound(key) {
         if (keyToNote(key)) {
             pressedKeys[key] = 'pressed';
+            if (highestKey()) key = highestKey();
             var note = keyToNote(key)[0];
             var octave = keyToNote(key)[1];
             var keyFreq = freq(note, octave + octaveChanger);
@@ -133,6 +138,25 @@ function makeSound() {
         }
     }
 
+    function playHighestNote() {
+        var key = highestKey();
+        playSound(key);
+    }
+
+    function highestKey() {
+        var keys = Object.keys(pressedKeys);
+        var highestKey;
+        keys.forEach(function (item) {
+            if (keyOrder(item) > keyOrder(highestKey)) {
+                highestKey = item;
+            }
+        })
+        if (highestKey) {
+            return highestKey;
+        }
+        return false;
+    }
+
     function stopSound(key) {
         delete pressedKeys[key];
         if (!Object.keys(pressedKeys).length) {
@@ -140,6 +164,9 @@ function makeSound() {
                 gainNode.gain.value = g;
             }
             gainNode.disconnect(ctx.destination);
+        }
+        else {
+            playHighestNote();
         }
     }
 
@@ -169,6 +196,35 @@ function makeSound() {
         if (note in freqs) {
             return freqs[note] * octaves[pos]
         }
+    }
+
+    function keyOrder(key) {
+        var keys = {
+            'a': 1,
+            's': 2,
+            'd': 3,
+            'f': 4,
+            'g': 5,
+            'h': 6,
+            'j': 7,
+            'k': 8,
+            'l': 9,
+            'é': 10,
+            'á': 11,
+            'ű': 12,
+            'w': 13,
+            'e': 14,
+            't': 15,
+            'z': 16,
+            'u': 17,
+            'o': 18,
+            'p': 19,
+            'ő': 20
+        }
+        if (key in keys) {
+            return keys[key]
+        }
+        return false
     }
 
 
