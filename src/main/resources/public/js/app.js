@@ -1,4 +1,4 @@
-function generateKeyboard(){
+function generateKeyboard() {
     var keyboard = document.getElementById('keyboard');
     var whiteKeys = {
         1: ['a', 'C', 3],
@@ -24,28 +24,28 @@ function generateKeyboard(){
         7: ['p', 'D#', 4],
         8: ['ő', 'F#', 4]
     }
-    for (let i = 0; i < 12; i++){
-        var key = document.createElement('div');
+    for (let i = 0; i < 12; i++) {
+        let key = document.createElement('div');
         key.className = 'white-key';
-        key.dataset.key = whiteKeys[i+1][0];
-        key.style.left = String(i*80) + 'px';
+        key.dataset.key = whiteKeys[i + 1][0];
+        key.style.left = String(i * 80) + 'px';
 
         var label = document.createElement('div');
-        label.innerHTML = '<b>' + whiteKeys[i+1][0].toUpperCase() + '</b>' + '<br><br>' + whiteKeys[i+1][1] + '<span class="octave">' + whiteKeys[i+1][2] + '</span>';
+        label.innerHTML = '<b>' + whiteKeys[i + 1][0].toUpperCase() + '</b>' + '<br><br>' + whiteKeys[i + 1][1] + '<span class="octave">' + whiteKeys[i + 1][2] + '</span>';
         label.className = 'key-label';
         key.appendChild(label);
 
         keyboard.appendChild(key);
     }
     var index = 0;
-    for (let i = 0; i < 11; i++){
-        var key = document.createElement('div');
+    for (let i = 0; i < 11; i++) {
+        let key = document.createElement('div');
         key.className = 'black-key';
-        key.style.left = String(50 + i*80) + 'px';
-        if (i !== 2 && i !== 6 && i !== 9){
-            key.dataset.key = blackKeys[index+1][0];
+        key.style.left = String(50 + i * 80) + 'px';
+        if (i !== 2 && i !== 6 && i !== 9) {
+            key.dataset.key = blackKeys[index + 1][0];
             var label = document.createElement('div');
-            label.innerHTML = '<b>' + blackKeys[index+1][0].toUpperCase() + '</b>' + '<br><br>' + blackKeys[index+1][1] + '<span class="octave">' + blackKeys[index+1][2] + '</span>';
+            label.innerHTML = '<b>' + blackKeys[index + 1][0].toUpperCase() + '</b>' + '<br><br>' + blackKeys[index + 1][1] + '<span class="octave">' + blackKeys[index + 1][2] + '</span>';
             label.className = 'key-label black-key-label';
             key.appendChild(label);
 
@@ -55,45 +55,45 @@ function generateKeyboard(){
     }
 }
 
-function refreshLabel(octaveChanger){
+function refreshLabel(octaveChanger) {
     var octaveLabels = document.getElementsByClassName('octave');
-    for (var i = 0; i < octaveLabels.length; i++){
+    for (var i = 0; i < octaveLabels.length; i++) {
         var label = octaveLabels[i];
         label.innerText = String(Number(label.innerText) + octaveChanger);
     }
 }
 
-function makeSound(){
+function makeSound() {
     var started = false;
     var ctx = new (window.AudioContext || window.webkitAudioContext)();
-    var osc = ctx.createOscillator(); 
+    var osc = ctx.createOscillator();
     var gainNode = ctx.createGain();
-    var volume = 0.5;
+    var volume = 0.8;
     gainNode.gain.value = volume;
-    osc.type = 'square';    
-    osc.connect(gainNode); 
+    osc.type = 'square';
+    osc.connect(gainNode);
     gainNode.connect(ctx.destination);
 
     var pressedKeys = {};
     var octaveChanger = 0;
 
-    document.addEventListener('keypress', function(event){
-        if (event.key === 'x'){
-            if (octaveChanger <= 1){
+    document.addEventListener('keypress', function (event) {
+        if (event.key === 'x') {
+            if (octaveChanger <= 1) {
                 octaveChanger += 1;
                 refreshLabel(1);
             }
-        } else if (event.key === 'y'){
-            if (octaveChanger >= -1){
-                octaveChanger -=1;
+        } else if (event.key === 'y') {
+            if (octaveChanger >= -1) {
+                octaveChanger -= 1;
                 refreshLabel(-1);
             }
         }
-        if (keyToNote(event.key)){
+        if (keyToNote(event.key)) {
             playSound(event.key, octaveChanger);
             var key = document.querySelector(`[data-key = ${event.key}]`);
             var label = key.children[0];
-            if (label.classList.contains('black-key-label')){
+            if (label.classList.contains('black-key-label')) {
                 key.classList.add('black-pressed');
                 label.classList.add('black-key-label-pressed');
             } else {
@@ -102,12 +102,12 @@ function makeSound(){
         }
     })
 
-    document.addEventListener('keyup', function(event){
-        if (event.key in pressedKeys){
+    document.addEventListener('keyup', function (event) {
+        if (event.key in pressedKeys) {
             stopSound(event.key);
             var key = document.querySelector(`[data-key = ${event.key}]`);
             var label = key.children[0];
-            if (label.classList.contains('black-key-label')){
+            if (label.classList.contains('black-key-label')) {
                 key.classList.remove('black-pressed');
                 label.classList.remove('black-key-label-pressed');
             } else {
@@ -116,34 +116,34 @@ function makeSound(){
         }
     });
 
-    function playSound(key, octaveChanger){
-        pressedKeys[key] = 'pressed';
-        if (keyToNote(key)){
+    function playSound(key, octaveChanger) {
+        if (keyToNote(key)) {
+            pressedKeys[key] = 'pressed';
             var note = keyToNote(key)[0];
             var octave = keyToNote(key)[1];
             var keyFreq = freq(note, octave + octaveChanger);
             osc.frequency.exponentialRampToValueAtTime(keyFreq, ctx.currentTime + 0.05);
-            if (started){
+            if (started) {
                 gainNode.gain.value = volume;
                 gainNode.connect(ctx.destination);
-            } else if (!started){
+            } else if (!started) {
                 osc.start(ctx.currentTime);
                 started = true;
             }
         }
     }
 
-    function stopSound(key){
+    function stopSound(key) {
         delete pressedKeys[key];
-        if (!Object.keys(pressedKeys).length){ 
-            for (var g = volume; g > 0; g = g - 0.01){
+        if (!Object.keys(pressedKeys).length) {
+            for (var g = volume; g > 0; g = g - 0.01) {
                 gainNode.gain.value = g;
             }
             gainNode.disconnect(ctx.destination);
         }
     }
 
-    function freq(note, pos){
+    function freq(note, pos) {
         var freqs = {
             'C': 130.81,
             'D': 146.83,
@@ -166,13 +166,13 @@ function makeSound(){
             5: 4,
             6: 8
         }
-        if (note in freqs){
+        if (note in freqs) {
             return freqs[note] * octaves[pos]
         }
     }
 
 
-    function keyToNote(key){
+    function keyToNote(key) {
         var keys = {
             'a': ['C', 3],
             's': ['D', 3],
@@ -195,18 +195,18 @@ function makeSound(){
             'p': ['D#', 4],
             'ő': ['F#', 4]
         }
-        if (key in keys){
+        if (key in keys) {
             return keys[key]
         }
         return false
     }
 }
 
-function main(){
+function main() {
     generateKeyboard();
     makeSound();
 }
 
-window.onload = function(event){
+window.onload = function (event) {
     main();
 }
