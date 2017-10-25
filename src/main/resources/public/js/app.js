@@ -24,7 +24,7 @@ function generateKeyboard(){
         7: ['p', 'D#', 4],
         8: ['ő', 'F#', 4]
     }
-    for (var i = 0; i < 12; i++){
+    for (let i = 0; i < 12; i++){
         var key = document.createElement('div');
         key.className = 'white-key';
         key.dataset.key = whiteKeys[i+1][0];
@@ -38,7 +38,7 @@ function generateKeyboard(){
         keyboard.appendChild(key);
     }
     var index = 0;
-    for (var i = 0; i < 11; i++){
+    for (let i = 0; i < 11; i++){
         var key = document.createElement('div');
         key.className = 'black-key';
         key.style.left = String(50 + i*80) + 'px';
