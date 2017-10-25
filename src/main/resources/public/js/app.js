@@ -13,7 +13,7 @@ function generateKeyboard() {
         10: ['é', 'E', 4],
         11: ['á', 'F', 4],
         12: ['ű', 'G', 4]
-    }
+    };
     var blackKeys = {
         1: ['w', 'C#', 3],
         2: ['e', 'D#', 3],
@@ -23,7 +23,7 @@ function generateKeyboard() {
         6: ['o', 'C#', 4],
         7: ['p', 'D#', 4],
         8: ['ő', 'F#', 4]
-    }
+    };
     for (let i = 0; i < 12; i++) {
         let key = document.createElement('div');
         key.className = 'white-key';
@@ -85,8 +85,12 @@ function makeSound() {
     document.addEventListener('keydown', function (event) {
         var downKey = event.key;
         if (downKey !== lastKey && (downKey === 'x' || downKey === 'y' || keyToNote(downKey))) {
+            var keyStartTime = ctx.currentTime - loopStartTime;
+            saveStartEvent(downKey, keyStartTime);
+
             console.log("down: " + downKey);
             lastKey = downKey;
+
             if (downKey === 'x') {
                 if (octaveChanger <= 1) {
                     octaveChanger += 1;
@@ -117,6 +121,9 @@ function makeSound() {
     document.addEventListener('keyup', function (event) {
         var upKey = event.key;
         if (upKey in pressedKeys) {
+            var keyStopTime = ctx.currentTime - loopStartTime;
+            saveStopEvent(upKey, keyStopTime);
+
             console.log("up: " + upKey);
             lastKey = null;
             stopSound(upKey);
@@ -180,6 +187,28 @@ function makeSound() {
         else {
             playHighestNote();
         }
+    }
+
+    function saveStartEvent(key, startTime) {
+        var request = $.ajax({
+            url: '/saveStart',
+            method: 'POST',
+            data: {'key': key, 'startTime': startTime}
+        });
+        request.done(function (response) {
+            console.log("start: " + response);
+        })
+    }
+
+    function saveStopEvent(key, stopTime) {
+        var request = $.ajax({
+            url: '/saveStop',
+            method: 'POST',
+            data: {'key': key, 'stopTime': stopTime}
+        });
+        request.done(function (response) {
+            console.log("stop: " + response);
+        })
     }
 
     function freq(note, pos) {
