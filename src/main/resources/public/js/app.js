@@ -71,6 +71,7 @@ function makeSound() {
     var osc = ctx.createOscillator();
     var gainNode = ctx.createGain();
     var volume = 0.5;
+    var portamento = 0.05;
     gainNode.gain.value = volume;
     osc.type = 'square';
     osc.connect(gainNode);
@@ -78,38 +79,48 @@ function makeSound() {
 
     var pressedKeys = {};
     var octaveChanger = 0;
+    var loopStartTime = ctx.currentTime;
+    var lastKey = null;
 
-    document.addEventListener('keypress', function (event) {
-        if (event.key === 'x') {
-            if (octaveChanger <= 1) {
-                octaveChanger += 1;
-                refreshLabel(1);
-                playHighestNote();
+    document.addEventListener('keydown', function (event) {
+        var downKey = event.key;
+        if (downKey !== lastKey && (downKey === 'x' || downKey === 'y' || keyToNote(downKey))) {
+            console.log("down: " + downKey);
+            lastKey = downKey;
+            if (downKey === 'x') {
+                if (octaveChanger <= 1) {
+                    octaveChanger += 1;
+                    refreshLabel(1);
+                    playHighestNote();
+                }
+            } else if (downKey === 'y') {
+                if (octaveChanger >= -1) {
+                    octaveChanger -= 1;
+                    refreshLabel(-1);
+                    playHighestNote();
+                }
             }
-        } else if (event.key === 'y') {
-            if (octaveChanger >= -1) {
-                octaveChanger -= 1;
-                refreshLabel(-1);
-                playHighestNote();
-            }
-        }
-        if (keyToNote(event.key)) {
-            playSound(event.key);
-            var key = document.querySelector(`[data-key = ${event.key}]`);
-            var label = key.children[0];
-            if (label.classList.contains('black-key-label')) {
-                key.classList.add('black-pressed');
-                label.classList.add('black-key-label-pressed');
-            } else {
-                key.classList.add('white-pressed');
+            if (keyToNote(downKey)) {
+                playSound(downKey);
+                var key = document.querySelector(`[data-key = ${downKey}]`);
+                var label = key.children[0];
+                if (label.classList.contains('black-key-label')) {
+                    key.classList.add('black-pressed');
+                    label.classList.add('black-key-label-pressed');
+                } else {
+                    key.classList.add('white-pressed');
+                }
             }
         }
     })
 
     document.addEventListener('keyup', function (event) {
-        if (event.key in pressedKeys) {
-            stopSound(event.key);
-            var key = document.querySelector(`[data-key = ${event.key}]`);
+        var upKey = event.key;
+        if (upKey in pressedKeys) {
+            console.log("up: " + upKey);
+            lastKey = null;
+            stopSound(upKey);
+            var key = document.querySelector(`[data-key = ${upKey}]`);
             var label = key.children[0];
             if (label.classList.contains('black-key-label')) {
                 key.classList.remove('black-pressed');
@@ -127,7 +138,7 @@ function makeSound() {
             var note = keyToNote(key)[0];
             var octave = keyToNote(key)[1];
             var keyFreq = freq(note, octave + octaveChanger);
-            osc.frequency.exponentialRampToValueAtTime(keyFreq, ctx.currentTime + 0.05);
+            osc.frequency.exponentialRampToValueAtTime(keyFreq, ctx.currentTime + portamento);
             if (started) {
                 gainNode.gain.value = volume;
                 gainNode.connect(ctx.destination);
@@ -140,6 +151,7 @@ function makeSound() {
 
     function playHighestNote() {
         var key = highestKey();
+        lastKey = key;
         playSound(key);
     }
 
