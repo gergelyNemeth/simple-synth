@@ -37,6 +37,7 @@ body {
     background-color: #ff8;
     cursor: pointer;
 } */
+
 .white-pressed {
     top: 5px;
     height: 400px;
@@ -69,4 +70,20 @@ body {
 .black-key-label-pressed,
 .black-key:hover .black-key-label{
     color: #ddd;
+}
+
+.button {
+    border: rgba(32,32,32,0.2) solid 1px;
+    border-radius: 8px;
+    background-color: ivory;
+    box-shadow: 2px 2px 5px grey;
+}
+
+.button:hover {
+    background-color: #ffffaa;
+    /*background-color: whitesmoke;*/
+}
+
+.button:hover .fa-circle {
+    color: red;
 }
