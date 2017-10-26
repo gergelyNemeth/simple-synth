@@ -81,8 +81,13 @@ function makeSound() {
     var octaveChanger = 0;
     var loopStartTime = ctx.currentTime;
     var lastKey = null;
+    var storage = {};
 
-    document.addEventListener('keydown', function (event) {
+    document.addEventListener('keydown', keyDown);
+
+    document.addEventListener('keyup', keyUp);
+
+    function keyDown(event) {
         var downKey = event.key;
         if (downKey !== lastKey && (downKey === 'x' || downKey === 'y' || keyToNote(downKey))) {
             var keyStartTime = ctx.currentTime - loopStartTime;
@@ -116,9 +121,9 @@ function makeSound() {
                 }
             }
         }
-    })
+    }
 
-    document.addEventListener('keyup', function (event) {
+    function keyUp(event) {
         var upKey = event.key;
         if (upKey in pressedKeys) {
             var keyStopTime = ctx.currentTime - loopStartTime;
@@ -136,7 +141,7 @@ function makeSound() {
                 key.classList.remove('white-pressed');
             }
         }
-    });
+    }
 
     function playSound(key) {
         if (keyToNote(key)) {
@@ -190,6 +195,7 @@ function makeSound() {
     }
 
     function saveStartEvent(key, startTime) {
+        storage[startTime]  = [key, "down"];
         var request = $.ajax({
             url: '/saveStart',
             method: 'POST',
@@ -201,6 +207,7 @@ function makeSound() {
     }
 
     function saveStopEvent(key, stopTime) {
+        storage[stopTime]  = [key, "up"];
         var request = $.ajax({
             url: '/saveStop',
             method: 'POST',
@@ -225,7 +232,7 @@ function makeSound() {
             'F#': 185.0,
             'G#': 207.65,
             'Bb': 233.08
-        }
+        };
         var octaves = {
             1: 0.25,
             2: 0.5,
@@ -233,7 +240,7 @@ function makeSound() {
             4: 2,
             5: 4,
             6: 8
-        }
+        };
         if (note in freqs) {
             return freqs[note] * octaves[pos]
         }
@@ -261,7 +268,7 @@ function makeSound() {
             'o': 18,
             'p': 19,
             'ő': 20
-        }
+        };
         if (key in keys) {
             return keys[key]
         }
@@ -291,7 +298,7 @@ function makeSound() {
             'o': ['C#', 4],
             'p': ['D#', 4],
             'ő': ['F#', 4]
-        }
+        };
         if (key in keys) {
             return keys[key]
         }
@@ -306,4 +313,4 @@ function main() {
 
 window.onload = function (event) {
     main();
-}
+};

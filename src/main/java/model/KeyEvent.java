@@ -1,11 +1,12 @@
 package model;
 
-public class StartEvent {
+public class KeyEvent {
 
     private String key;
-    private double startTime;
+    private Double startTime;
+    private Double stopTime;
 
-    public StartEvent(String key, double startTime) {
+    public KeyEvent(String key, Double startTime) {
         this.key = key;
         this.startTime = startTime;
     }
@@ -22,13 +23,22 @@ public class StartEvent {
         return startTime;
     }
 
-    public void setStartTime(double startTime) {
+    public void setStartTime(Double startTime) {
         this.startTime = startTime;
+    }
+
+    public Double getStopTime() {
+        return stopTime;
+    }
+
+    public void setStopTime(Double stopTime) {
+        this.stopTime = stopTime;
     }
 
     @Override
     public String toString() {
         return "Key: " + key +
-                ", startTime: " + startTime;
+                ", startTime: " + startTime +
+                ", stopTime: " + stopTime;
     }
 }

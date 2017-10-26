@@ -26,6 +26,7 @@ hs_err_pid*
 # IntelliJ project files
 .idea
 out
+target
 gen
 
 ## File-based project format:

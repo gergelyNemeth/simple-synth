@@ -1,7 +1,8 @@
 package controller;
 
-import model.StartEvent;
-import model.StopEvent;
+import dao.KeyEventDao;
+import dao.KeyEventDaoMem;
+import model.KeyEvent;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -24,16 +25,19 @@ public class SaveEventController {
     }
 
     public String saveStart(Request req, Response res) {
-        System.out.println(req.queryParams("key") + " - " + req.queryParams("startTime"));
-        StartEvent startevent = new StartEvent(req.queryParams("key"), Double.parseDouble(req.queryParams("startTime")));
-        System.out.println(startevent);
+        KeyEventDao noteDao = KeyEventDaoMem.getInstance();
+        KeyEvent keyEvent = new KeyEvent(req.queryParams("key"), Double.parseDouble(req.queryParams("startTime")));
+        noteDao.add(keyEvent);
+        System.out.println(keyEvent);
         return "saved";
     }
 
     public String saveStop(Request req, Response res) {
-        System.out.println(req.queryParams("key") + " - " + req.queryParams("stopTime"));
-        StopEvent stopevent = new StopEvent(req.queryParams("key"), Double.parseDouble(req.queryParams("stopTime")));
-        System.out.println(stopevent);
+        KeyEventDao noteDao = KeyEventDaoMem.getInstance();
+        KeyEvent keyEvent = noteDao.find(req.queryParams("key"));
+        keyEvent.setStopTime(Double.parseDouble(req.queryParams("stopTime")));
+        System.out.println(keyEvent);
+        System.out.println(noteDao.getAll());
         return "saved";
     }
 
