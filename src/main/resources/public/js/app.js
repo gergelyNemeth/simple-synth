@@ -70,13 +70,13 @@ function makeSound() {
     let ctx = new (window.AudioContext || window.webkitAudioContext)();
     let osc = ctx.createOscillator();
     let gainNode = ctx.createGain();
-    let volume = 0.3;
+    let volume = 0.1;
     let portamento = 0.05;
     gainNode.gain.value = volume;
     osc.type = 'square';
     osc.connect(gainNode);
     gainNode.connect(ctx.destination);
-    let bpm = 120;
+    let bpm = 140;
     let barTime = 240 / bpm;
 
     let pressedKeys = {};
@@ -258,18 +258,20 @@ function makeSound() {
             recordIcon.classList.remove('fa-stop-circle');
             recordIcon.classList.add('fa-circle-o-notch');
             recordIcon.classList.add('fa-spin');
-            recordIcon.classList.add('fa-fw');
         } else if (recordIsOn) {
             initializeKeys();
             recordIsOn = false;
             recordIcon.classList.remove('fa-circle-o-notch');
             recordIcon.classList.remove('fa-spin');
-            recordIcon.classList.remove('fa-fw');
             recordIcon.classList.add('fa-stop-circle');
+            recordIcon.classList.add('faa-pulse');
+            recordIcon.classList.add('animated');
             loopStopTime = ctx.currentTime;
             playBackIsOn = true;
             playBack();
         } else if (!recordIsOn && playBackIsOn) {
+            recordIcon.classList.remove('animated');
+            recordIcon.classList.remove('faa-pulse');
             recordIcon.classList.remove('fa-stop-circle');
             recordIcon.classList.add('fa-circle');
             playBackIsOn = false;

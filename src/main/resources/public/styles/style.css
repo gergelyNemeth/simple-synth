@@ -13,7 +13,7 @@ body {
     position: absolute;
     width: 80px;
     height: 400px;
-    border: rgba(32,32,32,0.2) solid 1px; 
+    border: rgba(32, 32, 32, 0.2) solid 1px;
     border-radius: 0 0 8px 8px;
     background-color: ivory;
     box-shadow: 2px 2px 5px grey;
@@ -48,7 +48,7 @@ body {
 .black-pressed {
     top: 3px;
     height: 250px;
-    background-color: #333; 
+    background-color: #333;
     box-shadow: none;
 }
 
@@ -68,12 +68,12 @@ body {
 }
 
 .black-key-label-pressed,
-.black-key:hover .black-key-label{
+.black-key:hover .black-key-label {
     color: #ddd;
 }
 
 .button {
-    border: rgba(32,32,32,0.2) solid 1px;
+    border: rgba(32, 32, 32, 0.2) solid 1px;
     border-radius: 8px;
     background-color: ivory;
     box-shadow: 2px 2px 5px grey;
@@ -88,11 +88,15 @@ body {
     color: red;
 }
 
+.fa {
+    text-align: center;
+}
+
 .fa-circle-o-notch {
     color: red;
 }
 
-.wobble-fix {
-    -webkit-filter: blur(0);
-    filter: blur(0);
+.fa-spin-fix .fa-spin {
+    -webkit-transform-origin: 50% calc(50% - .5px);
+    transform-origin: 50% calc(50% - .5px);
 }
