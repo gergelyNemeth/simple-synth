@@ -7,14 +7,14 @@ import java.util.List;
 
 public class KeyEventDaoMem implements KeyEventDao {
 
-    private static KeyEventDaoMem noteDao = null;
+    private static KeyEventDaoMem keyEventDao = null;
     private static List<KeyEvent> DATA = new ArrayList<>();
 
     public static KeyEventDaoMem getInstance() {
-        if (noteDao == null) {
-            noteDao = new KeyEventDaoMem();
+        if (keyEventDao == null) {
+            keyEventDao = new KeyEventDaoMem();
         }
-        return noteDao;
+        return keyEventDao;
     }
 
     @Override
@@ -33,6 +33,11 @@ public class KeyEventDaoMem implements KeyEventDao {
     @Override
     public List<KeyEvent> getAll() {
         return DATA;
+    }
+
+    @Override
+    public void clear() {
+        DATA.clear();
     }
 
 }

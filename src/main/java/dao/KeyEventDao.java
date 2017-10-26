@@ -8,4 +8,5 @@ public interface KeyEventDao {
     void add(KeyEvent keyEvent);
     KeyEvent find(String key);
     List<KeyEvent> getAll();
+    void clear();
 }

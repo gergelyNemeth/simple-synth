@@ -25,20 +25,26 @@ public class SaveEventController {
     }
 
     public String saveStart(Request req, Response res) {
-        KeyEventDao noteDao = KeyEventDaoMem.getInstance();
+        KeyEventDao keyEventDao = KeyEventDaoMem.getInstance();
         KeyEvent keyEvent = new KeyEvent(req.queryParams("key"), Double.parseDouble(req.queryParams("startTime")));
-        noteDao.add(keyEvent);
+        keyEventDao.add(keyEvent);
         System.out.println(keyEvent);
         return "saved";
     }
 
     public String saveStop(Request req, Response res) {
-        KeyEventDao noteDao = KeyEventDaoMem.getInstance();
-        KeyEvent keyEvent = noteDao.find(req.queryParams("key"));
+        KeyEventDao keyEventDao = KeyEventDaoMem.getInstance();
+        KeyEvent keyEvent = keyEventDao.find(req.queryParams("key"));
         keyEvent.setStopTime(Double.parseDouble(req.queryParams("stopTime")));
         System.out.println(keyEvent);
-        System.out.println(noteDao.getAll());
+        System.out.println(keyEventDao.getAll());
         return "saved";
+    }
+
+    public String clearAll(Request req, Response res) {
+        KeyEventDao keyEventDao = KeyEventDaoMem.getInstance();
+        keyEventDao.clear();
+        return "cleared";
     }
 
     public static String renderTemplate(Map model, String template) {

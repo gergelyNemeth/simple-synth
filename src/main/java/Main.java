@@ -14,7 +14,8 @@ public class Main {
 
         get("/", SynthPageController.getInstance()::render);
         post("/saveStart", SaveEventController.getInstance()::saveStart);
-        post("/saveStop", SaveEventController.getInstance()::saveStop);
+        put("/saveStop", SaveEventController.getInstance()::saveStop);
+        delete("/", SaveEventController.getInstance()::clearAll);
 
         enableDebugScreen();
     }
