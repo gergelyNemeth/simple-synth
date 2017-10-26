@@ -85,25 +85,52 @@ function makeSound() {
     let lastKey = null;
     let storage = {};
     let timeoutList = [];
+    let loop;
     let recordIsOn = false;
-    let recordButton = document.getElementById('recordButton');
+    let playBackIsOn = false;
+    let recordButton = document.getElementById('record-button');
+    let recordIcon = document.getElementById('record-icon');
 
     recordButton.addEventListener('click', record);
 
+    document.addEventListener('keypress', recordWithKey)
+
+    document.addEventListener('keydown', keyDown);
+
+    document.addEventListener('keyup', keyUp);
+
     function record() {
-        if (!recordIsOn) {
+        if (!recordIsOn && !playBackIsOn) {
             recordIsOn = true;
             clearAll();
             octaveChangerBeforeRecord = octaveChanger;
             loopStartTime = ctx.currentTime;
-            recordButton.firstChild.classList.remove('fa-circle');
-            recordButton.firstChild.classList.add('fa-stop-circle');
-        } else {
+            recordIcon.classList.remove('fa-circle');
+            recordIcon.classList.remove('fa-stop-circle');
+            recordIcon.classList.add('fa-circle-o-notch');
+            recordIcon.classList.add('fa-spin');
+            recordIcon.classList.add('fa-fw');
+        } else if (recordIsOn) {
             recordIsOn = false;
-            recordButton.firstChild.classList.remove('fa-stop-circle');
-            recordButton.firstChild.classList.add('fa-circle');
+            recordIcon.classList.remove('fa-circle-o-notch');
+            recordIcon.classList.remove('fa-spin');
+            recordIcon.classList.remove('fa-fw');
+            recordIcon.classList.add('fa-stop-circle');
             loopStopTime = ctx.currentTime;
+            playBackIsOn = true;
             playBack();
+        } else if (!recordIsOn && playBackIsOn) {
+            recordIcon.classList.remove('fa-stop-circle');
+            recordIcon.classList.add('fa-circle');
+            playBackIsOn = false;
+            clearInterval(loop);
+            clearAll();
+        }
+    }
+
+    function recordWithKey(event) {
+        if (event.key === " ") {
+            record();
         }
     }
 
@@ -120,7 +147,31 @@ function makeSound() {
                 octaveChanger = octaveChanger + increment;
                 refreshLabel(increment);
             }
-            // octaveChanger = octaveChangerBeforeRecord;
+        }
+    }
+
+    function loopStorage(playBackStartTime, loopTime, loopCounter) {
+        for (let time in storage) {
+            octaveRevertBack();
+            playBackStartTime = ctx.currentTime + loopTime * loopCounter;
+            let key = storage[time][0];
+            let keyEvent = storage[time][1];
+
+            let waitTime = time - (ctx.currentTime - playBackStartTime);
+            let timeout = setTimeout(eventAction, waitTime * 1000, keyEvent, key);
+
+            timeoutList.push(timeout);
+
+            function eventAction(keyEvent, key) {
+                if (keyEvent === 'down') {
+                    keyDownAction(key);
+                    console.log('key down');
+                }
+                if (keyEvent === 'up') {
+                    keyUpAction(key);
+                }
+                console.log('play');
+            }
         }
     }
 
@@ -128,40 +179,12 @@ function makeSound() {
         let loopCounter = 0;
         let playBackStartTime;
         let loopTime = (loopStopTime - loopStartTime);
-        // while (loopCounter < 3) {
-        setInterval(function(){
-            for (let time in storage) {
-                octaveRevertBack();
-                playBackStartTime = ctx.currentTime + loopTime * loopCounter;
-                let key = storage[time][0];
-                let keyEvent = storage[time][1];
-                let waitTime = time - (ctx.currentTime - playBackStartTime);
+        loopStorage(playBackStartTime, loopTime, loopCounter);
+        loop = setInterval(function () {
+            loopStorage(playBackStartTime, loopTime, loopCounter);
+        }, loopTime * 1000);
 
-                let timeout = setTimeout(eventAction, waitTime * 1000, keyEvent, key);
-                timeoutList.push(timeout);
-
-                function eventAction(keyEvent, key) {
-                    if (keyEvent === 'down') {
-                        keyDownAction(key);
-                        console.log('key down');
-                    }
-                    if (keyEvent === 'up') {
-                        keyUpAction(key);
-                    }
-                    console.log('play');
-                }
-            }
-            if (loopCounter === 4) return;
-
-            loopCounter++;
-            console.log(loopCounter);
-        }, loopTime);
-        // }
     }
-
-    document.addEventListener('keydown', keyDown);
-
-    document.addEventListener('keyup', keyUp);
 
     function keyDown(event) {
         let downKey = event.key;
@@ -313,7 +336,7 @@ function makeSound() {
     }
 
     function clearAll() {
-        timeoutList.forEach(function(timeout){
+        timeoutList.forEach(function (timeout) {
             clearTimeout(timeout);
         });
         storage = {};
