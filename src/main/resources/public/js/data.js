@@ -77,7 +77,7 @@ function keyToNote(key) {
         'u': ['Bb', 3],
         'o': ['C#', 4],
         'p': ['D#', 4],
-        'ő': ['F#', 4]
+        'ú': ['F#', 4]
     };
     if (key in keys) {
         return keys[key]

@@ -22,7 +22,7 @@ function generateKeyboard() {
         5: ['u', 'Bb', 3],
         6: ['o', 'C#', 4],
         7: ['p', 'D#', 4],
-        8: ['ő', 'F#', 4]
+        8: ['ú', 'F#', 4]
     };
     for (let i = 0; i < 12; i++) {
         let key = document.createElement('div');
@@ -77,7 +77,16 @@ function makeSound() {
     osc.connect(gainNode);
     gainNode.connect(ctx.destination);
     let bpm = 140;
-    let barTime = 240 / bpm;
+    let barTime = (60 / bpm) * 4; // 4/4
+
+    // TODO: Separate playback from realtime playing
+    let playBackOsc = ctx.createOscillator();
+    let playBackGain = ctx.createGain();
+    let playBackVolume = 0.1;
+    playBackGain.gain.value = playBackVolume;
+    playBackOsc.type = 'square';
+    playBackOsc.connect(playBackGain);
+    playBackGain.connect(ctx.destination);
 
     let pressedKeys = {};
     let octaveChanger = 0;
@@ -90,6 +99,7 @@ function makeSound() {
     let loop;
     let recordIsOn = false;
     let playBackIsOn = false;
+    let timeCorrection = 0.000000000000001;
 
     let recordButton = document.getElementById('record-button');
     let recordIcon = document.getElementById('record-icon');
@@ -225,6 +235,7 @@ function makeSound() {
     }
 
     function saveStartEvent(key, startTime) {
+        if (startTime in storage) startTime += timeCorrection;
         storage[startTime] = [key, "down"];
         let request = $.ajax({
             url: '/saveStart',
@@ -237,6 +248,7 @@ function makeSound() {
     }
 
     function saveStopEvent(key, stopTime) {
+        if (stopTime in storage) stopTime += timeCorrection;
         storage[stopTime] = [key, "up"];
         let request = $.ajax({
             url: '/saveStop',
@@ -294,11 +306,11 @@ function makeSound() {
         loopStorage(playbackStartTime);
         loop = setInterval(function () {
             playbackStartTime = ctx.currentTime - roundDiff;
-            loopStorage(playbackStartTime, roundDiff);
+            loopStorage(playbackStartTime);
         }, roundedLoopTime * 1000);
     }
 
-    function loopStorage(playbackStartTime, roundDiff) {
+    function loopStorage(playbackStartTime) {
         octaveRevertBack();
         for (let time in storage) {
             let key = storage[time][0];
@@ -351,7 +363,7 @@ function makeSound() {
         initializeKeys();
         mute();
         let request = $.ajax({
-            url: '/',
+            url: '/deleteLoop',
             method: 'DELETE'
         });
         request.done(function (response) {

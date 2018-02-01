@@ -1,10 +1,12 @@
-package model;
+package com.museme.model;
 
 public class KeyEvent {
 
     private String key;
     private Double startTime;
     private Double stopTime;
+    private String note;
+    private String octave;
 
     public KeyEvent(String key, Double startTime) {
         this.key = key;

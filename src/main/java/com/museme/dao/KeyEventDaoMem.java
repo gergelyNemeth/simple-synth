@@ -1,6 +1,6 @@
-package dao;
+package com.museme.dao;
 
-import model.KeyEvent;
+import com.museme.model.KeyEvent;
 
 import java.util.ArrayList;
 import java.util.List;
