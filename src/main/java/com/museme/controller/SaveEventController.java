@@ -1,42 +1,61 @@
 package com.museme.controller;
 
-import com.museme.dao.KeyEventDao;
 import com.museme.dao.KeyEventDaoMem;
 import com.museme.model.KeyEvent;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.museme.model.Melody;
+import com.museme.repository.KeyEventRepository;
+import com.museme.repository.MelodyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class SaveEventController {
 
+    @Autowired
+    KeyEventDaoMem keyEventDao;
+
+    @Autowired
+    KeyEventRepository keyEventRepository;
+
+    @Autowired
+    MelodyRepository melodyRepository;
+
     @RequestMapping(value = "/saveStart", method = RequestMethod.POST)
     public String saveStart(@RequestParam("key") String key,
                             @RequestParam("startTime") Double startTime) {
-        KeyEventDao keyEventDao = KeyEventDaoMem.getInstance();
         KeyEvent keyEvent = new KeyEvent(key, startTime);
         keyEventDao.add(keyEvent);
         System.out.println(keyEvent);
-        return "saved";
+        return "SAVED";
     }
 
     @RequestMapping(value = "/saveStop", method = RequestMethod.PUT)
     public String saveStop(@RequestParam("key") String key,
                            @RequestParam("stopTime") Double stopTime) {
-        KeyEventDao keyEventDao = KeyEventDaoMem.getInstance();
         KeyEvent keyEvent = keyEventDao.find(key);
         keyEvent.setStopTime(stopTime);
         System.out.println(keyEvent);
         System.out.println(keyEventDao.getAll());
-        return "saved";
+        return "SAVED";
     }
 
     @RequestMapping(value = "/deleteLoop", method = RequestMethod.DELETE)
     public String clearAll() {
-        KeyEventDao keyEventDao = KeyEventDaoMem.getInstance();
         keyEventDao.clear();
-        return "cleared";
+        return "CLEARED";
+    }
+
+    @RequestMapping(value = "/saveLoop", method = RequestMethod.POST)
+    public String saveLoop() {
+        Melody melody = new Melody(140);
+        melodyRepository.save(melody);
+        for (KeyEvent keyEvent : keyEventDao.getAll()) {
+            keyEvent.setMelody(melody);
+            keyEventRepository.save(keyEvent);
+        }
+        return "LOOP SAVED";
     }
 
 }

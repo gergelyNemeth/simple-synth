@@ -1,21 +1,15 @@
 package com.museme.dao;
 
 import com.museme.model.KeyEvent;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class KeyEventDaoMem implements KeyEventDao {
 
-    private static KeyEventDaoMem keyEventDao = null;
     private static List<KeyEvent> DATA = new ArrayList<>();
-
-    public static KeyEventDaoMem getInstance() {
-        if (keyEventDao == null) {
-            keyEventDao = new KeyEventDaoMem();
-        }
-        return keyEventDao;
-    }
 
     @Override
     public void add(KeyEvent keyEvent) {

@@ -1,6 +1,18 @@
 package com.museme.model;
 
-public class KeyEvent {
+import org.springframework.stereotype.Component;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
+
+@Entity
+@Component
+public class KeyEvent implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     private String key;
     private Double startTime;
@@ -8,9 +20,46 @@ public class KeyEvent {
     private String note;
     private String octave;
 
+    @ManyToOne
+    private Melody melody;
+
+    public KeyEvent() {}
+
     public KeyEvent(String key, Double startTime) {
         this.key = key;
         this.startTime = startTime;
+    }
+
+    public Melody getMelody() {
+        return melody;
+    }
+
+    public void setMelody(Melody melody) {
+        this.melody = melody;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getOctave() {
+        return octave;
+    }
+
+    public void setOctave(String octave) {
+        this.octave = octave;
     }
 
     public String getKey() {
