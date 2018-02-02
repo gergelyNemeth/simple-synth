@@ -88,7 +88,7 @@ public class KeyEvent implements Serializable {
 
     @Override
     public String toString() {
-        return "Key: " + key +
+        return "KeyEvent: " + key +
                 ", startTime: " + startTime +
                 ", stopTime: " + stopTime;
     }

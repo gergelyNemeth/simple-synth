@@ -64,4 +64,11 @@ public class Melody implements Serializable{
     public void setBpm(Integer bpm) {
         this.bpm = bpm;
     }
+
+    @Override
+    public String toString() {
+        return "Melody{" +
+                "melody=" + melody +
+                '}';
+    }
 }
