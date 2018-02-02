@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>MuseMe</title>
+    <title>MuseMe - Feed</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <link rel="stylesheet"
@@ -15,11 +15,13 @@
 <body>
 <div class="container text-center">
     <h1>MuseFeed</h1>
-    <div id="feed" th:each="melody, iter : ${melodies}">
-        <h3 th:text="'Melody 0' + ${iter.index + 1}"></h3>
-        <span class="post" th:each="keyEvent : ${melody.melody}">
-            <span th:text="${keyEvent.key}">test</span>
-        </span>
+    <div id="feed-container">
+        <div id="feed" class="text-left" th:each="melody : ${melodies}">
+            <span class="melody-title" th:text="'Melody ' + ${melody.id} + ': '"></span>
+            <span class="post" th:each="keyEvent : ${melody.melody}">
+                <span th:text="${keyEvent.note} + ${keyEvent.octave} + ' '"></span>
+            </span>
+        </div>
     </div>
 </div>
 </body>

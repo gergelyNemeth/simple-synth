@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin-ext');
+
 body {
     background-color: #ddd;
+    font-family: "Roboto", "Arial", sans-serif;
 }
 
 #keyboard {
@@ -99,4 +102,22 @@ body {
 .fa-spin-fix .fa-spin {
     -webkit-transform-origin: 50% calc(50% - .5px);
     transform-origin: 50% calc(50% - .5px);
+}
+
+#feed-container {
+    margin-top: 60px;
+}
+
+#feed {
+    margin-top: 30px;
+    padding: 15px;
+    background: white;
+}
+
+.melody-title {
+    font-size: 1.5em;
+}
+
+.post {
+    font-size: 1.2em;
 }

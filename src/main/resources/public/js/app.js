@@ -240,7 +240,8 @@ function makeSound() {
         let request = $.ajax({
             url: '/saveStart',
             method: 'POST',
-            data: {'key': key, 'startTime': startTime}
+            data: {'key': key, 'startTime': startTime,
+                'note': keyToNote(key)[0], 'octave': keyToNote(key)[1] + octaveChanger}
         });
         request.done(function (response) {
             console.log("start: " + response);

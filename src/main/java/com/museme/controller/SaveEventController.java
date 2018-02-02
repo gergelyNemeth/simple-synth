@@ -24,11 +24,15 @@ public class SaveEventController {
 
     @RequestMapping(value = "/saveStart", method = RequestMethod.POST)
     public String saveStart(@RequestParam("key") String key,
-                            @RequestParam("startTime") Double startTime) {
+                            @RequestParam("startTime") Double startTime,
+                            @RequestParam("note") String note,
+                            @RequestParam("octave") String octave) {
         KeyEvent keyEvent = new KeyEvent(key, startTime);
+        keyEvent.setNote(note);
+        keyEvent.setOctave(octave);
         keyEventDao.add(keyEvent);
         System.out.println(keyEvent);
-        return "SAVED";
+        return "saved";
     }
 
     @RequestMapping(value = "/saveStop", method = RequestMethod.PUT)
@@ -38,7 +42,7 @@ public class SaveEventController {
         keyEvent.setStopTime(stopTime);
         System.out.println(keyEvent);
         System.out.println(keyEventDao.getAll());
-        return "SAVED";
+        return "saved";
     }
 
     @RequestMapping(value = "/deleteLoop", method = RequestMethod.DELETE)

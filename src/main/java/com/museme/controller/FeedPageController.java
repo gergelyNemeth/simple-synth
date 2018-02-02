@@ -23,9 +23,7 @@ public class FeedPageController {
     @RequestMapping(value = "/feed", method = RequestMethod.GET)
     public String museFeed(Model model) {
         List<Melody> melodies = melodyRepository.findAll();
-        System.out.println(melodies);
         model.addAttribute("melodies", melodies);
-
         return "feed";
     }
 
