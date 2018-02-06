@@ -47,7 +47,7 @@ function keyOrder(key) {
         'u': 17,
         'o': 18,
         'p': 19,
-        'ő': 20
+        'ú': 20
     };
     if (key in keys) {
         return keys[key]
