@@ -240,7 +240,8 @@ function makeSound() {
         let request = $.ajax({
             url: '/saveStart',
             method: 'POST',
-            data: {'key': key, 'startTime': startTime}
+            data: {'key': key, 'startTime': startTime,
+                'note': keyToNote(key)[0], 'octave': keyToNote(key)[1] + octaveChanger}
         });
         request.done(function (response) {
             console.log("start: " + response);
@@ -260,8 +261,20 @@ function makeSound() {
         })
     }
 
+    function saveLoopIntoDatabase() {
+        let request = $.ajax({
+            url: '/saveLoop',
+            method: 'POST',
+            data: "saveLoop"
+        });
+        request.done(function (response) {
+            console.log(response);
+        })
+    }
+
     function record() {
         if (!recordIsOn && !playBackIsOn) {
+            // Start loop recording
             recordIsOn = true;
             clearAll();
             octaveChangerBeforeRecord = octaveChanger;
@@ -271,6 +284,7 @@ function makeSound() {
             recordIcon.classList.add('fa-circle-o-notch');
             recordIcon.classList.add('fa-spin');
         } else if (recordIsOn) {
+            // Stop loop recording
             initializeKeys();
             recordIsOn = false;
             recordIcon.classList.remove('fa-circle-o-notch');
@@ -281,7 +295,9 @@ function makeSound() {
             loopStopTime = ctx.currentTime;
             playBackIsOn = true;
             playBack();
+            saveLoopIntoDatabase();
         } else if (!recordIsOn && playBackIsOn) {
+            // Stop playing the loop and clear memory
             recordIcon.classList.remove('animated');
             recordIcon.classList.remove('faa-pulse');
             recordIcon.classList.remove('fa-stop-circle');
