@@ -48,10 +48,24 @@ body {
     box-shadow: none;
 }
 
+.white-pressed-playback {
+    top: 5px;
+    height: 400px;
+    background-color: #fba;
+    box-shadow: none;
+}
+
 .black-pressed {
     top: 3px;
     height: 250px;
     background-color: #333;
+    box-shadow: none;
+}
+
+.black-pressed-playback {
+    top: 3px;
+    height: 250px;
+    background-color: #633;
     box-shadow: none;
 }
 
