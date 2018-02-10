@@ -1,8 +1,14 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin-ext');
 
 body {
-    background-color: #ddd;
+    background-color: lightgrey;
     font-family: "Roboto", "Arial", sans-serif;
+    color: #455a64;
+}
+
+h1 {
+    font-weight: 400;
+    color: #1d262a;
 }
 
 #keyboard {
@@ -32,7 +38,7 @@ body {
     width: 60px;
     height: 250px;
     border-radius: 0 0 8px 8px;
-    background-color: #000;
+    background-color: #1d262a;
     box-shadow: 2px 2px 5px grey;
 }
 
@@ -58,7 +64,7 @@ body {
 .black-pressed {
     top: 3px;
     height: 250px;
-    background-color: #333;
+    background-color: #344953;
     box-shadow: none;
 }
 
@@ -107,6 +113,7 @@ body {
 
 .fa {
     text-align: center;
+    color: #1d262a;
 }
 
 .fa-circle-o-notch {
