@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SynthPageController {
 
     @RequestMapping(value="/")
-    public String playGroundPage() {
+    public String playgroundPage() {
         return "index";
     }
 
