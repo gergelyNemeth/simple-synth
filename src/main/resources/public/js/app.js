@@ -1,6 +1,6 @@
 function generateKeyboard() {
     let keyboard = document.getElementById('keyboard');
-    let whiteKeys = {
+    const whiteKeys = {
         1: ['a', 'C', 3],
         2: ['s', 'D', 3],
         3: ['d', 'E', 3],
@@ -14,7 +14,7 @@ function generateKeyboard() {
         11: ['á', 'F', 4],
         12: ['ű', 'G', 4]
     };
-    let blackKeys = {
+    const blackKeys = {
         1: ['w', 'C#', 3],
         2: ['e', 'D#', 3],
         3: ['t', 'F#', 3],
@@ -72,7 +72,7 @@ function makeSound() {
     let gainNode = ctx.createGain();
     let volume = 0.1;
     let portamento = 0.05;
-    gainNode.gain.value = volume;
+    gainNode.gain.setValueAtTime(volume, 0);
     osc.type = 'square';
     osc.connect(gainNode);
     gainNode.connect(ctx.destination);
@@ -97,7 +97,7 @@ function makeSound() {
     let playbackGain = ctx.createGain();
     let playbackVolume = 0.1;
     let playbackStarted = false;
-    playbackGain.gain.value = playbackVolume;
+    playbackGain.gain.setValueAtTime(playbackVolume, 0);
     playbackOsc.type = 'square';
     playbackOsc.connect(playbackGain);
     playbackGain.connect(ctx.destination);
@@ -230,7 +230,7 @@ function makeSound() {
             let keyFreq = freq(note, octave + octaveChanger);
             osc.frequency.exponentialRampToValueAtTime(keyFreq, ctx.currentTime + portamento);
             if (started) {
-                gainNode.gain.value = volume;
+                gainNode.gain.setValueAtTime(volume, 0);
                 gainNode.connect(ctx.destination);
             } else if (!started) {
                 osc.start(ctx.currentTime + 0.001);
@@ -239,7 +239,7 @@ function makeSound() {
         }
     }
 
-    function playLoopSound(key, note, octave) {
+    function playLoopSound(key) {
         if (keyToNote(key)) {
             playbackPressedKeys[key] = 'pressed';
             if (highestKey(playbackPressedKeys)) key = highestKey(playbackPressedKeys);
@@ -248,7 +248,7 @@ function makeSound() {
             let keyFreq = freq(note, octave + loopOctaveChanger);
             playbackOsc.frequency.exponentialRampToValueAtTime(keyFreq, ctx.currentTime + portamento);
             if (playbackStarted) {
-                playbackGain.gain.value = playbackVolume;
+                playbackGain.gain.setValueAtTime(playbackVolume, 0);
                 playbackGain.connect(ctx.destination);
             } else if (!playbackStarted) {
                 playbackOsc.start(ctx.currentTime + 0.001);
@@ -280,7 +280,7 @@ function makeSound() {
     function mute() {
         if (started) {
             for (let g = volume; g > 0; g = g - 0.01) {
-                gainNode.gain.value = g;
+                gainNode.gain.setValueAtTime(g, 0);
             }
             gainNode.disconnect();
         }
@@ -289,7 +289,7 @@ function makeSound() {
     function muteLoop() {
         if (playbackStarted) {
             for (let g = playbackVolume; g > 0; g = g - 0.01) {
-                playbackGain.gain.value = g;
+                playbackGain.gain.setValueAtTime(g, 0);
             }
             playbackGain.disconnect();
         }
@@ -405,7 +405,7 @@ function makeSound() {
             playBack();
             saveLoopIntoDatabase();
         } else if (!recordIsOn && playBackIsOn) {
-            // Stop playing the loop and clear memory
+            // Stop playing the loop and clear the memory
             recordIcon.classList.remove('animated');
             recordIcon.classList.remove('faa-pulse');
             recordIcon.classList.remove('fa-stop-circle');

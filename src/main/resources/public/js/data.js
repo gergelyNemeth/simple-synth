@@ -1,5 +1,5 @@
 function freq(note, pos) {
-    let freqs = {
+    const freqs = {
         'C': 130.81,
         'D': 146.83,
         'E': 164.81,
@@ -13,7 +13,7 @@ function freq(note, pos) {
         'G#': 207.65,
         'Bb': 233.08
     };
-    let octaves = {
+    const octaves = {
         1: 0.25,
         2: 0.5,
         3: 1,
@@ -27,7 +27,7 @@ function freq(note, pos) {
 }
 
 function keyOrder(key) {
-    let keys = {
+    const keys = {
         'a': 1,
         's': 2,
         'd': 3,
@@ -57,7 +57,7 @@ function keyOrder(key) {
 
 
 function keyToNote(key) {
-    let keys = {
+    const keys = {
         'a': ['C', 3],
         's': ['D', 3],
         'd': ['E', 3],
