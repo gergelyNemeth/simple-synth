@@ -1,70 +1,3 @@
-function generateKeyboard() {
-    let keyboard = document.getElementById('keyboard');
-    const whiteKeys = {
-        1: ['a', 'C', 3],
-        2: ['s', 'D', 3],
-        3: ['d', 'E', 3],
-        4: ['f', 'F', 3],
-        5: ['g', 'G', 3],
-        6: ['h', 'A', 3],
-        7: ['j', 'B', 3],
-        8: ['k', 'C', 4],
-        9: ['l', 'D', 4],
-        10: ['é', 'E', 4],
-        11: ['á', 'F', 4],
-        12: ['ű', 'G', 4]
-    };
-    const blackKeys = {
-        1: ['w', 'C#', 3],
-        2: ['e', 'D#', 3],
-        3: ['t', 'F#', 3],
-        4: ['z', 'G#', 3],
-        5: ['u', 'Bb', 3],
-        6: ['o', 'C#', 4],
-        7: ['p', 'D#', 4],
-        8: ['ú', 'F#', 4]
-    };
-    for (let i = 0; i < 12; i++) {
-        let key = document.createElement('div');
-        key.className = 'white-key';
-        key.dataset.key = whiteKeys[i + 1][0];
-        key.style.left = String(i * 80) + 'px';
-
-        let whiteKeyLabel = document.createElement('div');
-        whiteKeyLabel.innerHTML = '<b>' + whiteKeys[i + 1][0].toUpperCase() + '</b>' + '<br><br>' +
-            whiteKeys[i + 1][1] + '<span class="octave">' + whiteKeys[i + 1][2] + '</span>';
-        whiteKeyLabel.className = 'key-label';
-        key.appendChild(whiteKeyLabel);
-
-        keyboard.appendChild(key);
-    }
-    let index = 0;
-    for (let i = 0; i < 11; i++) {
-        let key = document.createElement('div');
-        key.className = 'black-key';
-        key.style.left = String(50 + i * 80) + 'px';
-        if (i !== 2 && i !== 6 && i !== 9) {
-            key.dataset.key = blackKeys[index + 1][0];
-            let blackKeyLabel = document.createElement('div');
-            blackKeyLabel.innerHTML = '<b>' + blackKeys[index + 1][0].toUpperCase() + '</b>' + '<br><br>' +
-                blackKeys[index + 1][1] + '<span class="octave">' + blackKeys[index + 1][2] + '</span>';
-            blackKeyLabel.className = 'key-label black-key-label';
-            key.appendChild(blackKeyLabel);
-
-            index++;
-            keyboard.appendChild(key);
-        }
-    }
-}
-
-function refreshLabel(octaveChanger) {
-    let octaveLabels = document.getElementsByClassName('octave');
-    for (let i = 0; i < octaveLabels.length; i++) {
-        let label = octaveLabels[i];
-        label.innerText = String(Number(label.innerText) + octaveChanger);
-    }
-}
-
 function makeSound() {
     let started = false;
     let ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -93,16 +26,57 @@ function makeSound() {
     let timeCorrection = 0.000000000000001;
 
     // Separate loop playback from realtime playing
-    let playbackOsc = ctx.createOscillator();
-    let playbackGain = ctx.createGain();
+    let loopCounter = 0;
+    let loops = [];
+    let oscillators = [];
+    let gains = [];
+    let loopPressedKeys = [];
+    let playbackStartedArray = [];
+    let octaveChangers = [];
+    let timeSyncCorrections = [];
+
     let playbackVolume = 0.1;
-    let playbackStarted = false;
-    playbackGain.gain.setValueAtTime(playbackVolume, 0);
-    playbackOsc.type = 'square';
-    playbackOsc.connect(playbackGain);
-    playbackGain.connect(ctx.destination);
-    let playbackPressedKeys = {};
-    let loopOctaveChanger = 0;
+
+    // let loopOctaveChanger = 0;
+
+    // function Loop() {
+    //     this.loopOsc = ctx.createOscillator();
+    //     this.loopGain = ctx.createGain();
+    //
+    //     this.loopGain.gain.setValueAtTime(playbackVolume, 0);
+    //     this.loopOsc.type = 'square';
+    //
+    //     this.loopOsc.connect(this.loopGain);
+    //     this.loopGain.connect(ctx.destination);
+    //
+    //     this.playbackStarted = false;
+    //     this.pressedKeys = [];
+    //     this.loopOctaveChanger = 0;
+    // }
+
+    // function createNewLoop() {
+    //     loops.push(new Loop());
+    // }
+    function createNewLoop() {
+        let playbackPressedKeys = {};
+        let playbackOsc = ctx.createOscillator();
+        let playbackGain = ctx.createGain();
+        playbackGain.gain.setValueAtTime(playbackVolume, 0);
+
+        playbackOsc.type = 'square';
+        playbackOsc.connect(playbackGain);
+
+        playbackGain.connect(ctx.destination);
+        oscillators.push(playbackOsc);
+        gains.push(playbackGain);
+        loopPressedKeys.push(playbackPressedKeys);
+        playbackStartedArray.push(false);
+        octaveChangers.push(0);
+
+        let timeSyncCorrection = Math.round(ctx.currentTime / barTime) * barTime - ctx.currentTime;
+        console.log(timeSyncCorrection);
+        timeSyncCorrections.push(timeSyncCorrection);
+    }
 
     let recordButton = document.getElementById('record-button');
     let recordIcon = document.getElementById('record-icon');
@@ -155,21 +129,21 @@ function makeSound() {
         }
     }
 
-    function loopKeyDownAction(downKey) {
+    function loopKeyDownAction(downKey, loopNumber) {
         if (downKey === 'x' || downKey === 'y' || keyToNote(downKey)) {
             if (downKey === 'x') {
-                if (loopOctaveChanger <= 1) {
-                    loopOctaveChanger += 1;
-                    playLoopHighestNote();
+                if (octaveChangers[loopNumber] <= 1) {
+                    octaveChangers[loopNumber] += 1;
+                    playLoopHighestNote(loopNumber);
                 }
             } else if (downKey === 'y') {
-                if (loopOctaveChanger >= -1) {
-                    loopOctaveChanger -= 1;
-                    playLoopHighestNote();
+                if (octaveChangers[loopNumber] >= -1) {
+                    octaveChangers[loopNumber] -= 1;
+                    playLoopHighestNote(loopNumber);
                 }
             }
             if (keyToNote(downKey)) {
-                playLoopSound(downKey);
+                playLoopSound(downKey, loopNumber);
                 let key = document.querySelector(`[data-key = ${downKey}]`);
                 let label = key.children[0];
                 if (label.classList.contains('black-key-label')) {
@@ -207,9 +181,9 @@ function makeSound() {
         }
     }
 
-    function loopKeyUpAction(upKey) {
-        if (upKey in playbackPressedKeys) {
-            stopLoopSound(upKey);
+    function loopKeyUpAction(upKey, loopNumber) {
+        if (upKey in loopPressedKeys[loopNumber]) {
+            stopLoopSound(upKey, loopNumber);
             let key = document.querySelector(`[data-key = ${upKey}]`);
             let label = key.children[0];
             if (label.classList.contains('black-key-label')) {
@@ -239,20 +213,21 @@ function makeSound() {
         }
     }
 
-    function playLoopSound(key) {
+    function playLoopSound(key, loopNumber) {
         if (keyToNote(key)) {
-            playbackPressedKeys[key] = 'pressed';
-            if (highestKey(playbackPressedKeys)) key = highestKey(playbackPressedKeys);
+            let pressedKeys = loopPressedKeys[loopNumber];
+            pressedKeys[key] = 'pressed';
+            if (highestKey(pressedKeys)) key = highestKey(pressedKeys);
             let note = keyToNote(key)[0];
             let octave = keyToNote(key)[1];
-            let keyFreq = freq(note, octave + loopOctaveChanger);
-            playbackOsc.frequency.exponentialRampToValueAtTime(keyFreq, ctx.currentTime + portamento);
-            if (playbackStarted) {
-                playbackGain.gain.setValueAtTime(playbackVolume, 0);
-                playbackGain.connect(ctx.destination);
-            } else if (!playbackStarted) {
-                playbackOsc.start(ctx.currentTime + 0.001);
-                playbackStarted = true;
+            let keyFreq = freq(note, octave + octaveChangers[loopNumber]);
+            oscillators[loopNumber].frequency.exponentialRampToValueAtTime(keyFreq, ctx.currentTime + portamento);
+            if (playbackStartedArray[loopNumber]) {
+                gains[loopNumber].gain.setValueAtTime(playbackVolume, 0);
+                gains[loopNumber].connect(ctx.destination);
+            } else if (!playbackStartedArray[loopNumber]) {
+                oscillators[loopNumber].start(ctx.currentTime + 0.001);
+                playbackStartedArray[loopNumber] = true;
             }
         }
     }
@@ -267,13 +242,13 @@ function makeSound() {
         }
     }
 
-    function stopLoopSound(key) {
-        delete playbackPressedKeys[key];
-        if (!Object.keys(playbackPressedKeys).length) {
-            muteLoop();
+    function stopLoopSound(key, loopNumber) {
+        delete loopPressedKeys[loopNumber][key];
+        if (!Object.keys(loopPressedKeys[loopNumber]).length) {
+            muteLoop(loopNumber);
         }
         else {
-            playLoopHighestNote();
+            playLoopHighestNote(loopNumber);
         }
     }
 
@@ -286,12 +261,12 @@ function makeSound() {
         }
     }
 
-    function muteLoop() {
-        if (playbackStarted) {
+    function muteLoop(loopNumber) {
+        if (playbackStartedArray[loopNumber]) {
             for (let g = playbackVolume; g > 0; g = g - 0.01) {
-                playbackGain.gain.setValueAtTime(g, 0);
+                gains[loopNumber].gain.setValueAtTime(g, 0);
             }
-            playbackGain.disconnect();
+            gains[loopNumber].disconnect();
         }
     }
 
@@ -315,9 +290,9 @@ function makeSound() {
         playSound(key);
     }
 
-    function playLoopHighestNote() {
-        let key = highestKey(playbackPressedKeys);
-        playLoopSound(key);
+    function playLoopHighestNote(loopNumber) {
+        let key = highestKey(loopPressedKeys[loopNumber]);
+        playLoopSound(key, loopNumber);
     }
 
     function saveStartEvent(key, startTime) {
@@ -380,6 +355,7 @@ function makeSound() {
         if (!recordIsOn && !playBackIsOn) {
             // Start loop recording
             recordIsOn = true;
+            createNewLoop();
             // clearAll();
             let keys = Object.keys(pressedKeys);
             keys.forEach(function (item) {
@@ -402,8 +378,11 @@ function makeSound() {
             recordIcon.classList.add('animated');
             loopStopTime = ctx.currentTime;
             playBackIsOn = true;
-            playBack();
+            loops.push(storage);
+            console.log(loops);
+            playBack(loopCounter);
             saveLoopIntoDatabase();
+            loopCounter++;
         } else if (!recordIsOn && playBackIsOn) {
             // Stop playing the loop and clear the memory
             recordIcon.classList.remove('animated');
@@ -422,42 +401,46 @@ function makeSound() {
         }
     }
 
-    function playBack() {
-        loopOctaveChanger = octaveChanger;
+    function playBack(loopCounter) {
+        octaveChangers[loopCounter] = octaveChanger;
         let loopTime = loopStopTime - loopStartTime;
         let roundedLoopTime = Math.round(loopTime / barTime) * barTime;
         let roundDiff = loopTime - roundedLoopTime;
         let playbackStartTime = ctx.currentTime - roundDiff;
-        loopStorage(playbackStartTime);
+        playLoop(playbackStartTime, loopCounter);
         loop = setInterval(function () {
             playbackStartTime = ctx.currentTime - roundDiff;
-            loopStorage(playbackStartTime);
+            playLoop(playbackStartTime, loopCounter);
         }, roundedLoopTime * 1000);
     }
 
-    function loopStorage(playbackStartTime) {
-        octaveRevertBack();
-        for (let time in storage) {
-            let key = storage[time][0];
-            let keyEvent = storage[time][1];
-            let waitTime = time - (ctx.currentTime - playbackStartTime);
-            let timeout = setTimeout(eventAction, waitTime * 1000, keyEvent, key);
+    function playLoop(playbackStartTime, loopCounter) {
+        octaveRevertBack(loopCounter);
+        for (let loopNumber = 0; loopNumber < loops.length; loopNumber++) {
+            // let loopNumber = loopCounter;
+            let storage = loops[loopNumber];
+            for (let time in storage) {
+                let key = storage[time][0];
+                let keyEvent = storage[time][1];
+                let waitTime = time - (ctx.currentTime - playbackStartTime) + (timeSyncCorrections[loopCounter] - timeSyncCorrections[loopNumber]);
+                let timeout = setTimeout(eventAction, waitTime * 1000, keyEvent, key);
 
-            timeoutList.push(timeout);
+                timeoutList.push(timeout);
 
-            function eventAction(keyEvent, key) {
-                if (keyEvent === 'down') {
-                    loopKeyDownAction(key);
-                }
-                if (keyEvent === 'up') {
-                    loopKeyUpAction(key);
+                function eventAction(keyEvent, key) {
+                    if (keyEvent === 'down') {
+                        loopKeyDownAction(key, loopNumber);
+                    }
+                    if (keyEvent === 'up') {
+                        loopKeyUpAction(key, loopNumber);
+                    }
                 }
             }
         }
     }
 
-    function octaveRevertBack() {
-        let octaveDiff = loopOctaveChanger - octaveChangerBeforeRecord;
+    function octaveRevertBack(loopNumber) {
+        let octaveDiff = octaveChangers[loopNumber] - octaveChangerBeforeRecord;
         let increment = 0;
         if (octaveDiff !== 0) {
             if (octaveDiff < 0) {
@@ -466,7 +449,7 @@ function makeSound() {
                 increment = -1;
             }
             for (let i = 0; i < Math.abs(octaveDiff); i++) {
-                loopOctaveChanger = loopOctaveChanger + increment;
+                octaveChangers[loopNumber] = octaveChangers[loopNumber] + increment;
                 // refreshLabel(increment);
             }
         }
@@ -481,11 +464,13 @@ function makeSound() {
     }
 
     function initializeLoopKeys() {
-        let keys = Object.keys(playbackPressedKeys);
-        keys.forEach(function (key) {
-            loopKeyUpAction(key);
-        });
-        playbackPressedKeys = {};
+        for (let loopNumber = 0; loopNumber < loops.length; loopNumber++) {
+            let keys = Object.keys(loopPressedKeys[loopNumber]);
+            keys.forEach(function (key) {
+                loopKeyUpAction(key, loopNumber);
+            });
+            // loopPressedKeys[loopNumber] = {};
+        }
     }
 
     function clearAll() {
@@ -496,7 +481,9 @@ function makeSound() {
         initializeKeys();
         initializeLoopKeys();
         mute();
-        muteLoop();
+        // for (let loopNumber = 0; loopNumber < loops.length; loopNumber++) {
+        //     muteLoop(loopNumber);
+        // }
         let request = $.ajax({
             url: '/deleteLoop',
             method: 'DELETE'
