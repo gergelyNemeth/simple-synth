@@ -9,7 +9,7 @@ function makeSound() {
     osc.type = 'square';
     osc.connect(gainNode);
     gainNode.connect(ctx.destination);
-    let bpm = 140;
+    let bpm = 70;
     let barTime = (60 / bpm) * 4; // 4/4
 
     let pressedKeys = {};
@@ -24,6 +24,8 @@ function makeSound() {
     let recordIsOn = false;
     let playBackIsOn = false;
     let timeCorrection = 0.000000000000001;
+
+    let oneLoop = false;
 
     // Separate loop playback from realtime playing
     let loopCounter = 0;
@@ -80,8 +82,10 @@ function makeSound() {
 
     let recordButton = document.getElementById('record-button');
     let recordIcon = document.getElementById('record-icon');
+    let trashButton = document.getElementById('trash-icon');
 
     recordButton.addEventListener('click', record);
+    trashButton.addEventListener('click', clearLoops);
 
     document.addEventListener('keypress', recordWithKey);
     document.addEventListener('keydown', keyDown);
@@ -356,7 +360,6 @@ function makeSound() {
             // Start loop recording
             recordIsOn = true;
             createNewLoop();
-            // clearAll();
             let keys = Object.keys(pressedKeys);
             keys.forEach(function (item) {
                 saveStartEvent(item, 0);
@@ -383,15 +386,9 @@ function makeSound() {
             playBack(loopCounter);
             saveLoopIntoDatabase();
             loopCounter++;
-        } else if (!recordIsOn && playBackIsOn) {
-            // Stop playing the loop and clear the memory
-            recordIcon.classList.remove('animated');
-            recordIcon.classList.remove('faa-pulse');
-            recordIcon.classList.remove('fa-stop-circle');
-            recordIcon.classList.add('fa-circle');
-            playBackIsOn = false;
-            clearInterval(loop);
-            clearAll();
+        }
+        else if (!recordIsOn && playBackIsOn) {
+            stopLoops();
         }
     }
 
@@ -405,6 +402,7 @@ function makeSound() {
         octaveChangers[loopCounter] = octaveChanger;
         let loopTime = loopStopTime - loopStartTime;
         let roundedLoopTime = Math.round(loopTime / barTime) * barTime;
+        if (roundedLoopTime === 0) roundedLoopTime = barTime;
         let roundDiff = loopTime - roundedLoopTime;
         let playbackStartTime = ctx.currentTime - roundDiff;
         playLoop(playbackStartTime, loopCounter);
@@ -417,7 +415,6 @@ function makeSound() {
     function playLoop(playbackStartTime, loopCounter) {
         octaveRevertBack(loopCounter);
         for (let loopNumber = 0; loopNumber < loops.length; loopNumber++) {
-            // let loopNumber = loopCounter;
             let storage = loops[loopNumber];
             for (let time in storage) {
                 let key = storage[time][0];
@@ -464,13 +461,35 @@ function makeSound() {
     }
 
     function initializeLoopKeys() {
+        // Stop playing pressed keys
         for (let loopNumber = 0; loopNumber < loops.length; loopNumber++) {
             let keys = Object.keys(loopPressedKeys[loopNumber]);
             keys.forEach(function (key) {
                 loopKeyUpAction(key, loopNumber);
             });
-            // loopPressedKeys[loopNumber] = {};
+            loopPressedKeys[loopNumber] = {};
         }
+    }
+
+    function stopLoops() {
+        // Stop playing the loop
+        recordIcon.classList.remove('animated');
+        recordIcon.classList.remove('faa-pulse');
+        recordIcon.classList.remove('fa-stop-circle');
+        recordIcon.classList.add('fa-circle');
+        playBackIsOn = false;
+        clearInterval(loop);
+        clearAll();
+    }
+
+    function clearLoops() {
+        stopLoops();
+        // Stop loops and delete the data
+        for (let loopNumber = 0; loopNumber < loops.length; loopNumber++) {
+            muteLoop(loopNumber);
+        }
+        loopCounter = 0;
+        loops = [];
     }
 
     function clearAll() {
@@ -481,9 +500,9 @@ function makeSound() {
         initializeKeys();
         initializeLoopKeys();
         mute();
-        // for (let loopNumber = 0; loopNumber < loops.length; loopNumber++) {
-        //     muteLoop(loopNumber);
-        // }
+
+        if (oneLoop) clearLoops();
+
         let request = $.ajax({
             url: '/deleteLoop',
             method: 'DELETE'
