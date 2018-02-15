@@ -19,6 +19,13 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private Set<Account> accounts = new HashSet<>();
 
+    public Role() {
+    }
+
+    public Role(String role) {
+        this.role = role;
+    }
+
     public Long getId() {
         return id;
     }
