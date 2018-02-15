@@ -39,8 +39,8 @@ function makeSound() {
 
     let playbackVolume = 0.1;
 
-    // let loopOctaveChanger = 0;
-
+    // TODO: Make a loop into an object instead of using a lot of lists
+    //
     // function Loop() {
     //     this.loopOsc = ctx.createOscillator();
     //     this.loopGain = ctx.createGain();
@@ -490,6 +490,19 @@ function makeSound() {
         }
         loopCounter = 0;
         loops = [];
+        oscillators = [];
+        gains = [];
+        loopPressedKeys = [];
+        playbackStartedArray = [];
+        octaveChangers = [];
+        timeSyncCorrections = [];
+        let request = $.ajax({
+            url: '/deleteAllLoops',
+            method: 'DELETE'
+        });
+        request.done(function (response) {
+            console.log(response);
+        })
     }
 
     function clearAll() {
