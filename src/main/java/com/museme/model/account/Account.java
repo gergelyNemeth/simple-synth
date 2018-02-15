@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,15 +26,28 @@ public class Account {
     @Column(name = "password", unique = true)
     @Length(min = 5, message = "*Your password must have at least 5 characters")
     @NotEmpty(message = "*Please provide your password")
-    @Transient
     private String password;
 
     @ManyToMany
     @JoinTable(name = "account_role",
             joinColumns = @JoinColumn(name = "account_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @Column(name = "active")
+    private boolean active;
+
+    @Column(name = "memberSince")
+    private LocalDateTime memberSince;
+
+    public Account() {
+    }
+
+    public Account(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
     public Long getId() {
         return id;
@@ -59,7 +73,23 @@ public class Account {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public LocalDateTime getMemberSince() {
+        return memberSince;
+    }
+
+    public void setMemberSince(LocalDateTime memberSince) {
+        this.memberSince = memberSince;
     }
 }
