@@ -1,0 +1,33 @@
+# URL of your database
+spring.datasource.url= jdbc:postgresql://localhost:5432/your database name
+
+# Username to access your DB
+spring.datasource.username=your username
+
+# Password to access your DB
+spring.datasource.password=your password
+
+# Creates the DB when the app starts, drops everything when the app closes. Good for testing.
+spring.jpa.hibernate.ddl-auto=create-drop
+
+# Thymeleaf mode
+spring.thymeleaf.mode=HTML
+
+spring.session.store-type=jdbc
+
+
+spring.jpa.properties.hibernate.default_schema = public
+spring.jpa.show-sql = true
+spring.jpa.generate-ddl=true
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.http.multipart.max-file-size=1048KB
+spring.http.multipart.max-request-size=1048KB
+
+#spring.thymeleaf.mode=LEGACYHTML5
+spring.thymeleaf.cache=false
+
+# ==============================================================
+# = Spring Security / Queries for AuthenticationManagerBuilder
+# ==============================================================
+spring.queries.users-query=select email, password, active from account where email=?
+spring.queries.roles-query=select a.email, r.role from account a inner join account_role ar on(a.account_id=ar.account_id) inner join role r on(ar.role_id=r.role_id) where a.email=?
