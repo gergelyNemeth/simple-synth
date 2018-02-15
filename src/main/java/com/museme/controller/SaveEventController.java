@@ -51,6 +51,14 @@ public class SaveEventController {
         return "CLEARED";
     }
 
+    @RequestMapping(value = "/deleteAllLoops", method = RequestMethod.DELETE)
+    public String clearAllLoops() {
+        keyEventRepository.deleteAll();
+        melodyRepository.deleteAll();
+        keyEventDao.clear();
+        return "CLEARED ALL LOOPS";
+    }
+
     @RequestMapping(value = "/saveLoop", method = RequestMethod.POST)
     public String saveLoop() {
         Melody melody = new Melody(140);
