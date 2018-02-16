@@ -8,17 +8,12 @@ body {
 
 h1 {
     font-weight: 400;
-    /*color: #1d262a;*/
     margin-top: 10px;
 }
 
-/*a {*/
-    /*color: #1d262a;*/
-/*}*/
-
-/*a:hover {*/
-    /*color: #455a64;*/
-/*}*/
+.login-register-title {
+    margin-top: 30px;
+}
 
 #keyboard {
     position: relative;
