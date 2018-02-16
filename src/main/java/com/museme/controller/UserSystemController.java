@@ -1,12 +1,10 @@
 package com.museme.controller;
 
-import com.museme.model.Melody;
 import com.museme.model.account.Account;
 import com.museme.repository.KeyEventRepository;
 import com.museme.repository.MelodyRepository;
 import com.museme.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,7 +29,6 @@ public class UserSystemController {
     @PreAuthorize("isAnonymous()")
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String renderLogin(Model model) {
-        model.addAttribute("account", new Account());
         return "login";
     }
 
@@ -43,5 +40,12 @@ public class UserSystemController {
             accountService.saveUser(account);
         }
         return "redirect:/login";
+    }
+
+    @PreAuthorize("isAnonymous()")
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public String registerPage(Model model) {
+        model.addAttribute("account", new Account());
+        return "register";
     }
 }

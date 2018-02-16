@@ -8,20 +8,29 @@ body {
 
 h1 {
     font-weight: 400;
-    color: #1d262a;
+    /*color: #1d262a;*/
+    margin-top: 10px;
 }
+
+/*a {*/
+    /*color: #1d262a;*/
+/*}*/
+
+/*a:hover {*/
+    /*color: #455a64;*/
+/*}*/
 
 #keyboard {
     position: relative;
     margin: 30px auto;
     width: 960px;
-    height: 405px;
+    height: 305px;
 }
 
 .white-key {
     position: absolute;
     width: 80px;
-    height: 400px;
+    height: 300px;
     border: rgba(32, 32, 32, 0.2) solid 1px;
     border-radius: 0 0 8px 8px;
     background-color: ivory;
@@ -36,7 +45,7 @@ h1 {
 .black-key {
     position: absolute;
     width: 60px;
-    height: 250px;
+    height: 150px;
     border-radius: 0 0 8px 8px;
     background-color: #1d262a;
     box-shadow: 2px 2px 5px grey;
@@ -49,28 +58,28 @@ h1 {
 
 .white-pressed {
     top: 5px;
-    height: 400px;
+    height: 300px;
     background-color: #ffa;
     box-shadow: none;
 }
 
 .white-pressed-playback {
     top: 5px;
-    height: 400px;
+    height: 300px;
     background-color: #eba;
     box-shadow: none;
 }
 
 .black-pressed {
     top: 3px;
-    height: 250px;
+    height: 150px;
     background-color: #344953;
     box-shadow: none;
 }
 
 .black-pressed-playback {
     top: 3px;
-    height: 250px;
+    height: 150px;
     background-color: #633;
     box-shadow: none;
 }
@@ -125,6 +134,9 @@ h1 {
     transform-origin: 50% calc(50% - .5px);
 }
 
+/* Feed page styles
+********************/
+
 #feed-container {
     margin-top: 60px;
 }
@@ -141,4 +153,39 @@ h1 {
 
 .post {
     font-size: 1.2em;
+}
+
+/* Form styles
+***************/
+
+.register-form,
+.login-form {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+.form-control {
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.message,
+.btn {
+    margin-top: 10px;
+}
+
+a.btn {
+    color: #455a64;
+}
+
+a.btn:hover {
+    color: ivory;
+    background-color:  #455a64;
+}
+
+.btn-block {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
 }

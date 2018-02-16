@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>MuseMe - Login</title>
+    <title>MuseMe - Register</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome-animation/0.1.0/font-awesome-animation.min.css">
@@ -13,17 +13,18 @@
 </head>
 <body>
 <div class="container text-center">
-    <h1>LOGIN</h1>
+    <h1>REGISTER</h1>
     <div class="login-page">
         <div class="form">
 
-            <form th:action="@{/login}" class="login-form" method="POST">
-                <input type="text" name="email" placeholder="email" class="form-control" required>
-                <input type="password" name="password" placeholder="password" class="form-control" required>
-                <input th:type="submit" class="btn btn-lg btn-primary btn-block" value="Sign In">
-                <p class="message">Need an account? <a th:href="@{/register}">Sign Up</a></p>
-
+            <form th:object="${account}" th:action="@{/register}" class="register-form" method="POST">
+                <input th:field="*{username}" type="text" name="username" placeholder="Your name" class="form-control" required>
+                <input th:field="*{email}" type="text" name="email" placeholder="Your email" class="form-control" required>
+                <input th:field="*{password}" type="password" name="Your password" placeholder="password" class="form-control" required>
+                <input th:type="submit" class="btn btn-lg btn-primary btn-block" value="Sign Up">
+                <p class="message">Already registered? <a th:href="@{/login}">Sign In</a></p>
             </form>
+
         </div>
     </div>
 </div>

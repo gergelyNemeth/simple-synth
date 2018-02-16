@@ -28,11 +28,11 @@ public class DataLoader implements CommandLineRunner {
         roleRepository.save(admin);
         roleRepository.save(user);
 
-        Account gergoAcc = new Account("gergo@museme.com", "anything");
+        Account gergoAcc = new Account("Gergo", "gergo@museme.com", "anything");
         gergoAcc.addRole(roleRepository.findByRole("ADMIN"));
         accountService.saveUser(gergoAcc);
 
-        Account petiAcc = new Account("peti@museme.com", "anythingElse");
+        Account petiAcc = new Account("Peti", "peti@museme.com", "anythingElse");
         accountService.saveUser(petiAcc);
 
     }

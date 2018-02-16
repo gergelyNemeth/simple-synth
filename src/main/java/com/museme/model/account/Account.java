@@ -18,6 +18,10 @@ public class Account {
     @Column(name = "account_id")
     private Long id;
 
+    @Column(name = "user_name", unique = true)
+    @NotEmpty(message = "*Please provide a name")
+    private String username;
+
     @Column(name = "email", unique = true)
     @Email(message = "*Please provide a valid email")
     @NotEmpty(message = "*Please provide an email")
@@ -44,9 +48,18 @@ public class Account {
     public Account() {
     }
 
-    public Account(String email, String password) {
+    public Account(String username, String email, String password) {
+        this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Long getId() {
