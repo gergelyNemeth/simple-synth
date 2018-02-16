@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MuseMe - Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome-animation/0.1.0/font-awesome-animation.min.css">
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" defer></script>
+</head>
+<body>
+<div class="container text-center">
+    <h1 class="login-register-title">REGISTER</h1>
+    <div class="login-page">
+        <div class="form">
+
+            <form th:object="${account}" th:action="@{/register}" class="register-form" method="POST">
+                <input th:field="*{username}" type="text" name="username" placeholder="Your name" class="form-control" required>
+                <input th:field="*{email}" type="text" name="email" placeholder="Your email" class="form-control" required>
+                <input th:field="*{password}" type="password" name="Your password" placeholder="Your password" class="form-control" required>
+                <input th:type="submit" class="btn btn-lg btn-primary btn-block" value="Sign Up">
+                <p class="message">Already registered? <a th:href="@{/login}">Sign In</a></p>
+            </form>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
