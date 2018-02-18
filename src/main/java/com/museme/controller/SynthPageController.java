@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
+
 @Controller
 public class SynthPageController {
 
@@ -18,16 +20,12 @@ public class SynthPageController {
 
     @PreAuthorize("hasAnyAuthority('USER')")
     @RequestMapping(value = "/")
-    public String playgroundPage(Model model) {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
+    public String playgroundPage(Model model, Principal principal) {
+        String email = principal.getName();
         Account account = accountRepository.findByEmail(email);
-
         if (account != null) {
             model.addAttribute("username", account.getUsername());
         }
-
         return "playground";
     }
 
