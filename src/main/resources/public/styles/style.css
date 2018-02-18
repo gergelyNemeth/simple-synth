@@ -184,3 +184,8 @@ a.btn:hover {
     -moz-border-radius: 4px;
     border-radius: 4px;
 }
+
+.form-error-message {
+    color: red;
+    padding-top: 10px;
+}

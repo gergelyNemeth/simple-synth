@@ -21,6 +21,10 @@
                 <input th:field="*{username}" type="text" name="username" placeholder="Your name" class="form-control" required>
                 <input th:field="*{email}" type="text" name="email" placeholder="Your email" class="form-control" required>
                 <input th:field="*{password}" type="password" name="Your password" placeholder="Your password" class="form-control" required>
+                <div class="form-error-message" th:if="${error}" th:text="${error}">SQL error</div>
+                <div class="form-error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">User Name Error</div>
+                <div class="form-error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
+                <div class="form-error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Pass Error</div>
                 <input th:type="submit" class="btn btn-lg btn-primary btn-block" value="Sign Up">
                 <p class="message">Already registered? <a th:href="@{/login}">Sign In</a></p>
             </form>
