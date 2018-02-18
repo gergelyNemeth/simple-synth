@@ -18,7 +18,7 @@
         <div class="form">
 
             <form th:object="${account}" th:action="@{/register}" class="register-form" method="POST">
-                <input th:field="*{username}" type="text" name="username" placeholder="Your name" class="form-control" required>
+                <input th:field="*{username}" type="text" name="username" placeholder="Your name" class="form-control" autofocus required>
                 <input th:field="*{email}" type="text" name="email" placeholder="Your email" class="form-control" required>
                 <input th:field="*{password}" type="password" name="Your password" placeholder="Your password" class="form-control" required>
                 <div class="form-error-message" th:if="${error}" th:text="${error}">SQL error</div>
