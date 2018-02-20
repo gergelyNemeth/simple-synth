@@ -19,7 +19,7 @@ public class Account {
     private Long id;
 
     @Column(name = "user_name", unique = true)
-    @NotEmpty(message = "*Please provide an user name")
+    @NotEmpty(message = "*Please provide a user name")
     private String username;
 
     @Column(name = "email", unique = true)
