@@ -32,6 +32,9 @@ public class Account {
     @NotEmpty(message = "*Please provide your password")
     private String password;
 
+    @Transient
+    private String confirmPassword;
+
     @ManyToMany
     @JoinTable(name = "account_role",
             joinColumns = @JoinColumn(name = "account_id"),
@@ -104,6 +107,14 @@ public class Account {
 
     public void setMemberSince(LocalDateTime memberSince) {
         this.memberSince = memberSince;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 
     @Override

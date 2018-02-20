@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class UserSystemController {
@@ -41,14 +38,18 @@ public class UserSystemController {
     public String serveRegister(Model model, @Valid @ModelAttribute Account account, BindingResult bindingResult) {
         Account nameExists = accountService.findUserByName(account.getUsername());
         Account accountExists = accountService.findUserByEmail(account.getEmail());
-        System.out.println(account);
-        System.out.println(nameExists);
+        String password = account.getPassword();
+        String confirmPassword = account.getConfirmPassword();
+
         if (bindingResult.hasErrors()) {
             return "register";
         }
-        if (accountExists == null && nameExists == null) {
+        if (accountExists == null && nameExists == null && password.equals(confirmPassword)) {
             accountService.saveUser(account);
             return "redirect:/login";
+        }
+        if (!password.equals(confirmPassword)) {
+            model.addAttribute("error", "*Passwords do not match");
         }
         if (nameExists != null) {
             model.addAttribute("error", "*Username is reserved");
