@@ -7,4 +7,6 @@ public interface AccountService {
     void saveUser(Account account);
 
     Account findUserByEmail(String email);
+
+    Account findUserByName(String username);
 }

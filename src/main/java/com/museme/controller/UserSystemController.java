@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,12 +35,29 @@ public class UserSystemController {
 
     @PreAuthorize("isAnonymous()")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String serveRegister(Model model, @Valid @ModelAttribute Account account) {
+    public String serveRegister(Model model, @Valid @ModelAttribute Account account, BindingResult bindingResult) {
+        Account nameExists = accountService.findUserByName(account.getUsername());
         Account accountExists = accountService.findUserByEmail(account.getEmail());
-        if (accountExists == null) {
-            accountService.saveUser(account);
+        String password = account.getPassword();
+        String confirmPassword = account.getConfirmPassword();
+
+        if (bindingResult.hasErrors()) {
+            return "register";
         }
-        return "redirect:/login";
+        if (accountExists == null && nameExists == null && password.equals(confirmPassword)) {
+            accountService.saveUser(account);
+            return "redirect:/login";
+        }
+        if (!password.equals(confirmPassword)) {
+            model.addAttribute("error", "*Passwords do not match");
+        }
+        if (nameExists != null) {
+            model.addAttribute("error", "*Username is reserved");
+        }
+        if (accountExists != null) {
+            model.addAttribute("error", "*Email address is already registered");
+        }
+        return "register";
     }
 
     @PreAuthorize("isAnonymous()")

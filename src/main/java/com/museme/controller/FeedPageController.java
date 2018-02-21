@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -30,9 +31,8 @@ public class FeedPageController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @RequestMapping(value = "/feed", method = RequestMethod.GET)
-    public String museFeed(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
+    public String museFeed(Model model, Principal principal) {
+        String email = principal.getName();
         Account account = accountRepository.findByEmail(email);
         if (account != null) {
             model.addAttribute("username", account.getUsername());

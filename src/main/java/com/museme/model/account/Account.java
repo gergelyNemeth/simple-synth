@@ -3,7 +3,6 @@ package com.museme.model.account;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,7 +19,7 @@ public class Account {
     private Long id;
 
     @Column(name = "user_name", unique = true)
-    @NotEmpty(message = "*Please provide a name")
+    @NotEmpty(message = "*Please provide a user name")
     private String username;
 
     @Column(name = "email", unique = true)
@@ -32,6 +31,9 @@ public class Account {
     @Length(min = 5, message = "*Your password must have at least 5 characters")
     @NotEmpty(message = "*Please provide your password")
     private String password;
+
+    @Transient
+    private String confirmPassword;
 
     @ManyToMany
     @JoinTable(name = "account_role",
@@ -105,5 +107,21 @@ public class Account {
 
     public void setMemberSince(LocalDateTime memberSince) {
         this.memberSince = memberSince;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

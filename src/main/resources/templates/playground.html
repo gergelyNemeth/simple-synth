@@ -17,14 +17,16 @@
     </head>
     <body>
 
-    <div class="nav container" sec:authorize="isAuthenticated()">
-        <div class="col-xs-6 left text-left">
-            <h2 class="logo">MuseME</h2>
-        </div>
-        <div th:if="${username}" class="center text-right">
-            <span class="btn" th:text="${username} + ' is logged in'">User Name</span>
-            <a th:href="@{/feed}" class="btn" th:text="MuseFeed">MuseFeed</a>
-            <a th:href="@{/logout}" class="btn btn-default" th:text="Logout">Logout</a>
+    <div class="navbar">
+        <div class="nav container" sec:authorize="isAuthenticated()">
+            <div class="col-xs-6 left text-left">
+                <h2 class="logo">MuseME</h2>
+            </div>
+            <div th:if="${username}" class="col-xs-6 center text-right menu">
+                <span class="btn" th:text="${username} + ' is logged in'">User Name</span>
+                <a th:href="@{/feed}" class="btn" th:text="MuseFeed">MuseFeed</a>
+                <a th:href="@{/logout}" class="btn btn-default" th:text="Logout">Logout</a>
+            </div>
         </div>
     </div>
 

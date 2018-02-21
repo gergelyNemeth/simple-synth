@@ -18,7 +18,7 @@
         <div class="form">
 
             <form th:action="@{/login}" class="login-form" method="POST">
-                <input type="text" name="email" placeholder="Your email" class="form-control" required>
+                <input type="text" name="email" placeholder="Your email" class="form-control" autofocus required>
                 <input type="password" name="password" placeholder="Your password" class="form-control" required>
                 <input th:type="submit" class="btn btn-lg btn-primary btn-block" value="Sign In">
                 <p class="message">Need an account? <a th:href="@{/register}">Sign Up</a></p>
