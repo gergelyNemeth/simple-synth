@@ -1,5 +1,6 @@
 package com.museme.model.account;
 
+import com.museme.model.Project;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -7,6 +8,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,7 +17,6 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "account_id")
     private Long id;
 
     @Column(name = "user_name", unique = true)
@@ -37,7 +38,7 @@ public class Account {
 
     @ManyToMany
     @JoinTable(name = "account_role",
-            joinColumns = @JoinColumn(name = "account_id"),
+            joinColumns = @JoinColumn(name = "account.id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
@@ -45,8 +46,18 @@ public class Account {
     @Column(name = "active")
     private boolean active;
 
-    @Column(name = "memberSince")
+    @Column(name = "member_since")
     private LocalDateTime memberSince;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Project> projectsOwned;
+
+    @ManyToMany
+    @JoinTable(name = "account_project_contributed",
+            joinColumns = @JoinColumn(name = "project.id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id")
+    )
+    private List<Project> projectsContributed;
 
     public Account() {
     }
@@ -115,6 +126,22 @@ public class Account {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public List<Project> getProjectsOwned() {
+        return projectsOwned;
+    }
+
+    public void setProjectsOwned(List<Project> projectsOwned) {
+        this.projectsOwned = projectsOwned;
+    }
+
+    public List<Project> getProjectsContributed() {
+        return projectsContributed;
+    }
+
+    public void setProjectsContributed(List<Project> projectsContributed) {
+        this.projectsContributed = projectsContributed;
     }
 
     @Override

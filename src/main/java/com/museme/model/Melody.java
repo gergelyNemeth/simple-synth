@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Component
-public class Melody implements Serializable{
+public class Melody implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +20,14 @@ public class Melody implements Serializable{
 
     @Column(unique = true)
     private String name;
+
     private Integer bpm;
 
-    public Melody(){}
+    @ManyToOne
+    private Project project;
+
+    public Melody() {
+    }
 
     public Melody(Integer bpm) {
         melody = new ArrayList<>();
@@ -63,6 +68,14 @@ public class Melody implements Serializable{
 
     public void setBpm(Integer bpm) {
         this.bpm = bpm;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     @Override
