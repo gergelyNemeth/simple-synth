@@ -23,7 +23,7 @@ public class Melody implements Serializable {
 
     private Integer bpm;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     private Project project;
 
     public Melody() {

@@ -4,7 +4,10 @@ import com.museme.model.account.Account;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Component
@@ -14,19 +17,24 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToMany(mappedBy = "project")
-    private List<Melody> melodyList;
+    @OneToMany(mappedBy = "project", cascade = {CascadeType.ALL})
+    private List<Melody> melodyList = new ArrayList<>();
 
     @Column(unique = true)
     private String name;
 
-    private Integer tempo;
+    private Integer bpm;
 
     @ManyToOne
     private Account owner;
 
     @ManyToMany
-    private List<Account> contributors;
+    @OrderColumn
+    @JoinTable(name = "project_contributor",
+            joinColumns = {@JoinColumn(name = "project_id")},
+            inverseJoinColumns = {@JoinColumn(name = "account_id")}
+    )
+    private Set<Account> contributors = new HashSet<>();
 
     public Project() {
     }
@@ -63,12 +71,12 @@ public class Project {
         this.name = name;
     }
 
-    public Integer getTempo() {
-        return tempo;
+    public Integer getBpm() {
+        return bpm;
     }
 
-    public void setTempo(Integer tempo) {
-        this.tempo = tempo;
+    public void setBpm(Integer bpm) {
+        this.bpm = bpm;
     }
 
     public Account getOwner() {
@@ -79,7 +87,7 @@ public class Project {
         this.owner = owner;
     }
 
-    public List<Account> getContributors() {
+    public Set<Account> getContributors() {
         return contributors;
     }
 

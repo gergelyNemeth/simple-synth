@@ -52,12 +52,9 @@ public class Account {
     @OneToMany(mappedBy = "owner")
     private List<Project> projectsOwned;
 
-    @ManyToMany
-    @JoinTable(name = "account_project_contributed",
-            joinColumns = @JoinColumn(name = "project.id"),
-            inverseJoinColumns = @JoinColumn(name = "account_id")
-    )
-    private List<Project> projectsContributed;
+    @ManyToMany(mappedBy = "contributors")
+    @OrderColumn
+    private Set<Project> projectsContributed;
 
     public Account() {
     }
@@ -136,11 +133,11 @@ public class Account {
         this.projectsOwned = projectsOwned;
     }
 
-    public List<Project> getProjectsContributed() {
+    public Set<Project> getProjectsContributed() {
         return projectsContributed;
     }
 
-    public void setProjectsContributed(List<Project> projectsContributed) {
+    public void setProjectsContributed(Set<Project> projectsContributed) {
         this.projectsContributed = projectsContributed;
     }
 

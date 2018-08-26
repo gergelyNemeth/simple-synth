@@ -3,12 +3,14 @@ package com.museme.controller;
 import com.museme.dao.KeyEventDaoMem;
 import com.museme.model.KeyEvent;
 import com.museme.model.Melody;
+import com.museme.model.Project;
+import com.museme.repository.AccountRepository;
 import com.museme.repository.KeyEventRepository;
 import com.museme.repository.MelodyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.security.Principal;
 
 @RestController
 public class SaveEventController {
@@ -21,6 +23,9 @@ public class SaveEventController {
 
     @Autowired
     MelodyRepository melodyRepository;
+
+    @Autowired
+    AccountRepository accountRepository;
 
     @RequestMapping(value = "/saveStart", method = RequestMethod.POST)
     public String saveStart(@RequestParam("key") String key,
@@ -60,9 +65,14 @@ public class SaveEventController {
     }
 
     @RequestMapping(value = "/saveLoop", method = RequestMethod.POST)
-    public String saveLoop() {
+    public String saveLoop(Principal principal) {
         Melody melody = new Melody(140);
         melodyRepository.save(melody);
+        Project project = new Project();
+        project.addMelody(melody);
+        project.setOwner(accountRepository.findByEmail(principal.getName()));
+        project.setBpm(melody.getBpm());
+        melody.setProject(project);
         for (KeyEvent keyEvent : keyEventDao.getAll()) {
             keyEvent.setMelody(melody);
             keyEventRepository.save(keyEvent);
